@@ -18,8 +18,8 @@ kotlin {
 dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
-    //compileOnly(libs.detekt.gradlePlugin)
-    implementation(libs.detekt.gradlePlugin)
+    compileOnly(libs.detekt.gradlePlugin)
+    compileOnly(libs.room.gradlePlugin)
 }
 
 gradlePlugin {
@@ -39,6 +39,18 @@ gradlePlugin {
         register("androidHilt") {
             id = "rustor.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
+        }
+        register("androidLibrary") {
+            id = "rustor.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("androidRoom") {
+            id = "rustor.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
+        register("androidFeature") {
+            id = "rustor.android.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
         }
     }
 }
