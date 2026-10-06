@@ -1,7 +1,3 @@
-build:
-  maxIssues: 0
-  excludeCorrectable: false
-
 config:
   validation: true
   warningsAsErrors: false
@@ -10,24 +6,24 @@ complexity:
   active: true
   LongMethod:
     active: true
-    threshold: 100
+    allowedLines: 99
   LongParameterList:
     active: true
-    functionThreshold: 7
-    constructorThreshold: 8
+    allowedFunctionParameters: 6
+    allowedConstructorParameters: 7
     ignoreAnnotated:
       - 'Composable'
   TooManyFunctions:
     active: true
-    thresholdInFiles: 20
-    thresholdInClasses: 20
+    allowedFunctionsPerFile: 19
+    allowedFunctionsPerClass: 19
   CyclomaticComplexMethod:
     active: true
-    threshold: 15
+    allowedComplexity: 14
 
 style:
   active: true
-  UnusedPrivateMember:
+  UnusedPrivateFunction:
     active: true
     ignoreAnnotated:
       - 'Preview'
@@ -58,7 +54,7 @@ naming:
     functionPattern: '[a-z][a-zA-Z0-9]*'
     ignoreAnnotated: ['Composable']
 
-formatting:
+ktlint:
   active: true
   autoCorrect: true
   Indentation:

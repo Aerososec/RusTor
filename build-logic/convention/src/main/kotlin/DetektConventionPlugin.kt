@@ -1,6 +1,6 @@
 import com.rustor.buildlogic.libs
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import dev.detekt.gradle.Detekt
+import dev.detekt.gradle.extensions.DetektExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -8,28 +8,26 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
 
 class DetektConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) = with(target) {
-        pluginManager.apply("io.gitlab.arturbosch.detekt")
+    override fun apply(target: Project) {
+        with(target) {
+            pluginManager.apply("dev.detekt")
 
-       extensions.configure<DetektExtension> {
-           config.setFrom(rootProject.files("config/detekt/detekt.yml"))
-           buildUponDefaultConfig = true
-           autoCorrect = true
-           parallel = true
-       }
+            extensions.configure<DetektExtension> {
+                config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+                buildUponDefaultConfig.set(true)
+                parallel.set(true)
+                autoCorrect.set(true)
+            }
 
-        dependencies {
-            "detektPlugins"(libs.findLibrary("detekt-formatting").get())
-        }
+            dependencies {
+                "detektPlugins"(libs.findLibrary("detekt-ktlint").get())
+            }
 
-        tasks.withType<Detekt>().configureEach {
-            jvmTarget = "17"
-            reports {
-                html.required.set(true)
-                xml.required.set(false)
-                txt.required.set(false)
-                sarif.required.set(true)
-                md.required.set(false)
+            tasks.withType<Detekt>().configureEach {
+                reports {
+                    html.required.set(true)
+                    sarif.required.set(true)
+                }
             }
         }
     }
