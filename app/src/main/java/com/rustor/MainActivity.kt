@@ -1,4 +1,4 @@
-package com.example.rustor
+package com.rustor
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

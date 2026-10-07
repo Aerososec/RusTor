@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.rustor.android.application)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.example.rustor"
+    namespace = "com.rustor"
 
     defaultConfig {
-        applicationId = "com.example.rustor"
+        applicationId = "com.rustor"
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

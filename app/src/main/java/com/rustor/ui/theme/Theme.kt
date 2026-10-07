@@ -1,4 +1,4 @@
-package com.example.rustor.ui.theme
+package com.rustor.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

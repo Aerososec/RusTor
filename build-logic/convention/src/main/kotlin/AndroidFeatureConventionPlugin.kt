@@ -20,7 +20,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             dependencies {
                 "implementation"(libs.findBundle("lifecycle").get())
                 "implementation"(libs.findBundle("coroutines").get())
-                "implementation"(libs.findLibrary("hilt-navigation-compose").get())
+                "implementation"(libs.findLibrary("hilt-lifecycle-viewmodel-compose").get())
 
                 "testImplementation"(libs.findBundle("testing-unit").get())
                 "androidTestImplementation"(libs.findBundle("testing-compose").get())
