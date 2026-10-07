@@ -16,7 +16,7 @@ class DetektConventionPlugin : Plugin<Project> {
                 config.setFrom(rootProject.files("config/detekt/detekt.yml"))
                 buildUponDefaultConfig.set(true)
                 parallel.set(true)
-                autoCorrect.set(true)
+                autoCorrect.set(!providers.environmentVariable("CI").isPresent)
             }
 
             dependencies {
