@@ -22,7 +22,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findBundle("coroutines").get())
                 "implementation"(libs.findLibrary("hilt-lifecycle-viewmodel-compose").get())
 
-                "androidTestImplementation"(libs.findBundle("testing-compose").get())
+                "testImplementation"(libs.findBundle("testing-unit").get())
             }
         }
     }
