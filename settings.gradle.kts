@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "RusTor"
 include(":app")
+include(":feature:onboarding")
  
