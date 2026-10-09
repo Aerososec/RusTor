@@ -24,5 +24,16 @@ dependencyResolutionManagement {
 
 rootProject.name = "RusTor"
 include(":app")
+
+//core
+include(":core:domain")
+include(":core:common")
+include(":core:model")
+include(":core:database")
+
+//feature
 include(":feature:onboarding")
- 
+include(":feature:showcase")
+
+//data
+include(":data:catalog")
