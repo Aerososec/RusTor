@@ -1,0 +1,58 @@
+{
+  "categories": [
+    { "id": "finance", "title": "Финансы" },
+    { "id": "tools", "title": "Инструменты" },
+    { "id": "games", "title": "Игры" },
+    { "id": "government", "title": "Государственные" },
+    { "id": "transport", "title": "Транспорт" }
+  ],
+  "apps": [
+    {
+      "packageName": "app.organicmaps",
+      "name": "Organic Maps",
+      "developer": "Organic Maps",
+      "categoryId": "transport",
+      "ageRating": "0+",
+      "iconUrl": "https://f-droid.org/repo/app.organicmaps/en-US/icon_dE7f4P95-uKZwu7cI89Q0xSi_-gvU4DD-XnLoDG9RLg=.png",
+      "summary": "Офлайн-карты с GPS-навигацией для походов и путешествий",
+      "description": "Бесплатные офлайн-карты на основе OpenStreetMap. Пешие, велосипедные и автомобильные маршруты без интернета, поиск мест, закладки. Без рекламы и слежки.",
+      "screenshots": [
+        "https://f-droid.org/repo/app.organicmaps/en-US/phoneScreenshots/1.jpg",
+        "https://f-droid.org/repo/app.organicmaps/en-US/phoneScreenshots/2.jpg",
+        "https://f-droid.org/repo/app.organicmaps/en-US/phoneScreenshots/3.jpg"
+      ],
+      "apkUrl": "https://f-droid.org/repo/app.organicmaps_26092932.apk"
+    },
+    {
+      "packageName": "com.shatteredpixel.shatteredpixeldungeon",
+      "name": "Shattered Pixel Dungeon",
+      "developer": "Shattered Pixel",
+      "categoryId": "games",
+      "ageRating": "12+",
+      "iconUrl": "https://f-droid.org/repo/com.shatteredpixel.shatteredpixeldungeon/en-US/icon_sGrA1aakL86yLytAeV0fds7P_nAq5FZvoABR78V9p0Y=.png",
+      "summary": "Ролевой рогалик: легко начать, сложно освоить",
+      "description": "Исследуйте подземелье, сражайтесь с монстрами и собирайте снаряжение. Каждое прохождение уникально: уровни генерируются случайно. Основано на Pixel Dungeon.",
+      "screenshots": [
+        "https://f-droid.org/repo/com.shatteredpixel.shatteredpixeldungeon/en-US/phoneScreenshots/1.png",
+        "https://f-droid.org/repo/com.shatteredpixel.shatteredpixeldungeon/en-US/phoneScreenshots/2.png",
+        "https://f-droid.org/repo/com.shatteredpixel.shatteredpixeldungeon/en-US/phoneScreenshots/3.png"
+      ],
+      "apkUrl": "https://f-droid.org/repo/com.shatteredpixel.shatteredpixeldungeon_920.apk"
+    },
+    {
+      "packageName": "org.fossify.math",
+      "name": "Fossify Calculator",
+      "developer": "Fossify",
+      "categoryId": "tools",
+      "ageRating": "0+",
+      "iconUrl": "https://f-droid.org/repo/org.fossify.math/en-US/icon_Ck-pz2KmdAej-o4SvEzXLHWxs8jVqBaNJz4-4N4FXxE=.png",
+      "summary": "Простой калькулятор без рекламы",
+      "description": "Калькулятор с открытым исходным кодом для быстрых вычислений. Поддерживает историю, копирование результата и тёмную тему.",
+      "screenshots": [
+        "https://f-droid.org/repo/org.fossify.math/en-US/phoneScreenshots/1_en-US.png",
+        "https://f-droid.org/repo/org.fossify.math/en-US/phoneScreenshots/2_en-US.png"
+      ],
+      "apkUrl": "https://f-droid.org/repo/org.fossify.math_10.apk"
+    }
+  ]
+}
