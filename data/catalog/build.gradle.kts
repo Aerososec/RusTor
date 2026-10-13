@@ -9,5 +9,8 @@ android {
 }
 
 dependencies{
+    implementation(project(":core:model"))
+    implementation(project(":core:database"))
+
     implementation(libs.kotlinx.serialization.json)
 }
