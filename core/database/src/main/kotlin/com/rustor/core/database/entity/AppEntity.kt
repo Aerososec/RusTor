@@ -28,5 +28,5 @@ data class AppEntity(
     val description: String,
     val screenshots: List<String>,
     @ColumnInfo(name = "apk_url") val apkUrl: String?,
-    @ColumnInfo(name = "feed_position") val feedPosition: Int
+    @ColumnInfo(name = "feed_position") val feedPosition: Int,
 )

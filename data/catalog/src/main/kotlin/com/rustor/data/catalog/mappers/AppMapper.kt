@@ -18,7 +18,7 @@ internal fun AppDto.toEntity(feedPosition: Int) = AppEntity(
     description = description,
     screenshots = screenshots.filter { it.isNotBlank() },
     apkUrl = apkUrl?.takeIf { it.isNotBlank() },
-    feedPosition = feedPosition
+    feedPosition = feedPosition,
 )
 
 internal fun AppWithCategory.toDomain(): App = App(

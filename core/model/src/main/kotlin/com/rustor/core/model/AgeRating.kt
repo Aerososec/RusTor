@@ -6,10 +6,10 @@ enum class AgeRating(val value: Int) {
     EIGHT_PLUS(8),
     TWELVE_PLUS(12),
     SIXTEEN_PLUS(16),
-    EIGHTEEN_PLUS(18);
+    EIGHTEEN_PLUS(18),
+    ;
 
     companion object {
-        fun fromMinAge(minAge: Int): AgeRating =
-            entries.firstOrNull { it.value == minAge } ?: EIGHTEEN_PLUS
+        fun fromMinAge(minAge: Int): AgeRating = entries.firstOrNull { it.value == minAge } ?: EIGHTEEN_PLUS
     }
 }
