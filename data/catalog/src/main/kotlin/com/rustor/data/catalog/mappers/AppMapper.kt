@@ -7,17 +7,18 @@ import com.rustor.core.model.App
 import com.rustor.core.model.AppId
 import com.rustor.data.catalog.dto.AppDto
 
-internal fun AppDto.toEntity() = AppEntity(
+internal fun AppDto.toEntity(feedPosition: Int) = AppEntity(
     id = packageName,
     name = name,
     developer = developer,
     categoryId = categoryId,
-    ageRating = ageRating.toAgeRating().name,
+    ageRating = ageRating.toAgeRating(),
     iconUrl = iconUrl?.takeIf { it.isNotBlank() },
     summary = summary,
     description = description,
     screenshots = screenshots.filter { it.isNotBlank() },
     apkUrl = apkUrl?.takeIf { it.isNotBlank() },
+    feedPosition = feedPosition
 )
 
 internal fun AppWithCategory.toDomain(): App = App(
@@ -25,7 +26,7 @@ internal fun AppWithCategory.toDomain(): App = App(
     name = app.name,
     developer = app.developer,
     category = category.toDomain(),
-    ageRating = AgeRating.valueOf(app.ageRating),
+    ageRating = AgeRating.Companion.fromMinAge(app.ageRating),
     iconUrl = app.iconUrl,
     summary = app.summary,
     description = app.description,
@@ -33,11 +34,11 @@ internal fun AppWithCategory.toDomain(): App = App(
     apkUrl = app.apkUrl,
 )
 
-private fun String?.toAgeRating(): AgeRating = when (this?.trim()) {
-    "0+" -> AgeRating.ZERO_PLUS
-    "6+" -> AgeRating.SIX_PLUS
-    "8+" -> AgeRating.EIGHT_PLUS
-    "12+" -> AgeRating.TWELVE_PLUS
-    "16+" -> AgeRating.SIXTEEN_PLUS
-    else -> AgeRating.EIGHTEEN_PLUS
+private fun String?.toAgeRating(): Int = when (this?.trim()) {
+    "0+" -> AgeRating.ZERO_PLUS.value
+    "6+" -> AgeRating.SIX_PLUS.value
+    "8+" -> AgeRating.EIGHT_PLUS.value
+    "12+" -> AgeRating.TWELVE_PLUS.value
+    "16+" -> AgeRating.SIXTEEN_PLUS.value
+    else -> AgeRating.EIGHTEEN_PLUS.value
 }

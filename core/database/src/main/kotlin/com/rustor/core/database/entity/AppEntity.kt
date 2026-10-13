@@ -22,10 +22,11 @@ data class AppEntity(
     val name: String,
     val developer: String,
     @ColumnInfo(name = "category_id") val categoryId: String,
-    @ColumnInfo(name = "age_rating") val ageRating: String,
+    @ColumnInfo(name = "age_rating") val ageRating: Int,
     @ColumnInfo(name = "icon_url") val iconUrl: String?,
     val summary: String,
     val description: String,
     val screenshots: List<String>,
     @ColumnInfo(name = "apk_url") val apkUrl: String?,
+    @ColumnInfo(name = "feed_position") val feedPosition: Int
 )
