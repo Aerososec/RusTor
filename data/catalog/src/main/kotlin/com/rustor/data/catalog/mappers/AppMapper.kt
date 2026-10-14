@@ -12,7 +12,7 @@ internal fun AppDto.toEntity(feedPosition: Int) = AppEntity(
     name = name,
     developer = developer,
     categoryId = categoryId,
-    ageRating = ageRating.toAgeRating(),
+    ageRating = ageRating.toAgeRating().minAge,
     iconUrl = iconUrl?.takeIf { it.isNotBlank() },
     summary = summary,
     description = description,
@@ -26,7 +26,7 @@ internal fun AppWithCategory.toDomain(): App = App(
     name = app.name,
     developer = app.developer,
     category = category.toDomain(),
-    ageRating = AgeRating.Companion.fromMinAge(app.ageRating),
+    ageRating = AgeRating.fromMinAge(app.ageRating),
     iconUrl = app.iconUrl,
     summary = app.summary,
     description = app.description,
@@ -34,11 +34,11 @@ internal fun AppWithCategory.toDomain(): App = App(
     apkUrl = app.apkUrl,
 )
 
-private fun String?.toAgeRating(): Int = when (this?.trim()) {
-    "0+" -> AgeRating.ZERO_PLUS.value
-    "6+" -> AgeRating.SIX_PLUS.value
-    "8+" -> AgeRating.EIGHT_PLUS.value
-    "12+" -> AgeRating.TWELVE_PLUS.value
-    "16+" -> AgeRating.SIXTEEN_PLUS.value
-    else -> AgeRating.EIGHTEEN_PLUS.value
+internal fun String?.toAgeRating(): AgeRating = when (this?.trim()) {
+    "0+" -> AgeRating.ZERO_PLUS
+    "6+" -> AgeRating.SIX_PLUS
+    "8+" -> AgeRating.EIGHT_PLUS
+    "12+" -> AgeRating.TWELVE_PLUS
+    "16+" -> AgeRating.SIXTEEN_PLUS
+    else -> AgeRating.EIGHTEEN_PLUS
 }

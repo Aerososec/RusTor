@@ -1,6 +1,6 @@
 package com.rustor.core.model
 
-enum class AgeRating(val value: Int) {
+enum class AgeRating(val minAge: Int) {
     ZERO_PLUS(0),
     SIX_PLUS(6),
     EIGHT_PLUS(8),
@@ -10,6 +10,6 @@ enum class AgeRating(val value: Int) {
     ;
 
     companion object {
-        fun fromMinAge(minAge: Int): AgeRating = entries.firstOrNull { it.value == minAge } ?: EIGHTEEN_PLUS
+        fun fromMinAge(minAge: Int): AgeRating = entries.firstOrNull { it.minAge == minAge } ?: EIGHTEEN_PLUS
     }
 }
