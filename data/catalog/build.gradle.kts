@@ -13,4 +13,5 @@ dependencies{
     implementation(project(":core:database"))
 
     implementation(libs.kotlinx.serialization.json)
+    testImplementation(libs.bundles.testing.unit)
 }
