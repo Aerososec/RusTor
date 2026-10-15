@@ -2,7 +2,7 @@ package com.rustor.core.database.converter
 
 import androidx.room.TypeConverter
 
-class ScreenshotsConverter {
+internal class ScreenshotsConverter {
     @TypeConverter
     fun fromList(urls: List<String>): String = urls.joinToString(SEPARATOR)
 
