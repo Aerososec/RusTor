@@ -6,4 +6,13 @@ plugins{
 
 android {
     namespace = "com.rustor.core.database"
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+}
+
+dependencies{
+    testImplementation(libs.bundles.testing.unit)
+    testImplementation(libs.bundles.testing.robolectric)
 }
