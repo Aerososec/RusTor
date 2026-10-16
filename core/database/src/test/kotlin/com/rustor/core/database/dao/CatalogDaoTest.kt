@@ -117,6 +117,23 @@ class CatalogDaoTest {
         }
     }
 
+    @Test
+    fun `feed by category contains only that category in feed order`() = runTest {
+        dao.replaceCatalog(
+            categories = listOf(category("games"), category("tools")),
+            apps = listOf(
+                app("g.second", categoryId = "games", feedPosition = 3),
+                app("t.first", categoryId = "tools", feedPosition = 1),
+                app("g.first", categoryId = "games", feedPosition = 0),
+                app("t.second", categoryId = "tools", feedPosition = 2),
+            ),
+        )
+
+        val feed = dao.observeFeedByCategory("games").first()
+
+        assertEquals(listOf("g.first", "g.second"), feed.map { it.app.id })
+    }
+
     private fun category(id: String, title: String = id) = CategoryEntity(id = id, title = title)
 
     private fun app(id: String, categoryId: String = "tools", feedPosition: Int = 0) = AppEntity(
