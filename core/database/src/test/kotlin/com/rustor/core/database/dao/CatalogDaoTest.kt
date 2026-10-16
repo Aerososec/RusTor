@@ -74,7 +74,10 @@ class CatalogDaoTest {
     @Test
     fun `feed item contains its category`() = runTest {
         dao.replaceCatalog(
-            categories = listOf(category("tools", title = "Инструменты"), category("games", title = "Игры")),
+            categories = listOf(
+                category("tools", title = "Инструменты"),
+                category("games", title = "Игры"),
+            ),
             apps = listOf(app("a.game", categoryId = "games")),
         )
 
@@ -116,11 +119,7 @@ class CatalogDaoTest {
 
     private fun category(id: String, title: String = id) = CategoryEntity(id = id, title = title)
 
-    private fun app(
-        id: String,
-        categoryId: String = "tools",
-        feedPosition: Int = 0,
-    ) = AppEntity(
+    private fun app(id: String, categoryId: String = "tools", feedPosition: Int = 0) = AppEntity(
         id = id,
         name = "Example",
         developer = "Example Dev",
