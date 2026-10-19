@@ -2,6 +2,7 @@ package com.rustor.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.MapColumn
 import androidx.room.Query
 import androidx.room.Transaction
 import com.rustor.core.database.entity.AppEntity
@@ -41,4 +42,12 @@ abstract class CatalogDao {
 
     @Insert
     protected abstract suspend fun insertApps(apps: List<AppEntity>)
+
+    @Query("SELECT id, feed_position FROM apps")
+    abstract suspend fun getFeedPositions(): Map<
+        @MapColumn("id")
+        String,
+        @MapColumn("feed_position")
+        Int,
+        >
 }

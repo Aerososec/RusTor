@@ -134,6 +134,29 @@ class CatalogDaoTest {
         assertEquals(listOf("g.first", "g.second"), feed.map { it.app.id })
     }
 
+    @Test
+    fun `feed positions returns position of every app`() = runTest {
+        dao.replaceCatalog(
+            categories = listOf(category("tools")),
+            apps = listOf(
+                app("a.one", feedPosition = 5),
+                app("b.two", feedPosition = 0),
+                app("c.three", feedPosition = 2),
+            ),
+        )
+
+        val positions = dao.getFeedPositions()
+
+        assertEquals(mapOf("a.one" to 5, "b.two" to 0, "c.three" to 2), positions)
+    }
+
+    @Test
+    fun `feed positions is empty for empty database`() = runTest {
+        val positions = dao.getFeedPositions()
+
+        assertEquals(emptyMap<String, Int>(), positions)
+    }
+
     private fun category(id: String, title: String = id) = CategoryEntity(id = id, title = title)
 
     private fun app(id: String, categoryId: String = "tools", feedPosition: Int = 0) = AppEntity(
