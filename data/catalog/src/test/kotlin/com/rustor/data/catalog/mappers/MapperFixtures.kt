@@ -44,7 +44,7 @@ internal fun appDto(
 internal fun storedAgeRating(raw: String?): Int =
     appDto(packageName = "com.example.app", ageRating = raw).toEntity(feedPosition = 0).ageRating
 
-internal fun appEntity(id: String = "com.example.app", ageRating: Int = 0) = AppEntity(
+internal fun appEntity(id: String = "com.example.app", ageRating: Int = 0, feedPosition: Int = 0) = AppEntity(
     id = id,
     name = "Example",
     developer = "Example Dev",
@@ -55,7 +55,7 @@ internal fun appEntity(id: String = "com.example.app", ageRating: Int = 0) = App
     description = "Full description",
     screenshots = listOf("https://example.com/s1.png"),
     apkUrl = "https://example.com/app.apk",
-    feedPosition = 0,
+    feedPosition = feedPosition,
 )
 
 internal fun appWithCategory(
