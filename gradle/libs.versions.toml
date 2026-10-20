@@ -23,6 +23,7 @@ mockk = "1.14.11"
 kotlinxSerialization = "1.10.0"
 robolectric = "4.17"
 androidxTestCore = "1.7.0"
+javaxInject = "1"
 
 
 [libraries]
@@ -61,6 +62,8 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 [bundles]
 compose-ui = [
@@ -86,6 +89,7 @@ testing-unit = [
     "turbine",
     "mockk",
     "kotlinx-coroutines-test",
+    "kotlin-test"
 ]
 
 testing-compose = [

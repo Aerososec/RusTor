@@ -1,4 +1,4 @@
-package com.rustor.data.catalog
+package com.rustor.data.catalog.dataSourse
 
 import com.rustor.data.catalog.dto.CatalogDto
 

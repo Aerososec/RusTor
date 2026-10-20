@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.rustor.android.application)
+    alias(libs.plugins.rustor.android.hilt)
 }
 
 android {
@@ -34,4 +35,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(project(":core:common"))
+    implementation(project(":core:database"))
+    implementation(project(":data:catalog"))
+    implementation(project(":feature:showcase"))
 }
