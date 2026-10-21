@@ -16,4 +16,6 @@ dependencies{
 
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.bundles.testing.unit)
+    testImplementation(libs.bundles.testing.robolectric)
+    testImplementation(libs.androidx.room.runtime)
 }

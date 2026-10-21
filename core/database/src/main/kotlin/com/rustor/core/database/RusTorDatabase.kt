@@ -14,6 +14,6 @@ import com.rustor.core.database.entity.CategoryEntity
     exportSchema = true,
 )
 @TypeConverters(ScreenshotsConverter::class)
-internal abstract class RusTorDatabase : RoomDatabase() {
+abstract class RusTorDatabase : RoomDatabase() {
     abstract fun catalogDao(): CatalogDao
 }
