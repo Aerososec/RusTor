@@ -30,6 +30,7 @@ include(":core:domain")
 include(":core:common")
 include(":core:model")
 include(":core:database")
+include(":core:ui")
 
 //feature
 include(":feature:onboarding")

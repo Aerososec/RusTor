@@ -1,4 +1,4 @@
-package com.rustor.ui.theme
+package com.rustor.core.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

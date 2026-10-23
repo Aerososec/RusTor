@@ -52,5 +52,10 @@ gradlePlugin {
             id = "rustor.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
+        register("androidLibraryCompose") {
+            id = "rustor.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
+        
     }
 }

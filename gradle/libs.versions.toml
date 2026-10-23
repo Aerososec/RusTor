@@ -119,3 +119,4 @@ rustor-android-hilt = { id = "rustor.android.hilt" }
 rustor-android-library = { id = "rustor.android.library" }
 rustor-android-room = { id = "rustor.android.room" }
 rustor-android-feature = { id = "rustor.android.feature" }
+rustor-android-library-compose = { id = "rustor.android.library.compose" }
