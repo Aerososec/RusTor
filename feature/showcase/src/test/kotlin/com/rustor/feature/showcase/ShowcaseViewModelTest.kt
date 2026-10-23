@@ -222,8 +222,7 @@ class ShowcaseViewModelTest {
         assertEquals(FeedState.Content(listOf(game, tool), isRefreshing = false), viewModel.uiState.value.feed)
     }
 
-    private fun createViewModel(mode: ShowcaseMode) =
-        ShowcaseViewModel(repository, savedStateHandle, mode)
+    private fun createViewModel(mode: ShowcaseMode) = ShowcaseViewModel(repository, savedStateHandle, mode)
 
     private fun TestScope.collectStates(viewModel: ShowcaseViewModel): List<ShowcaseUiState> {
         val states = mutableListOf<ShowcaseUiState>()
