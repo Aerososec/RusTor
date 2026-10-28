@@ -64,6 +64,7 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
+androidx-compose-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
 
 [bundles]
 compose-ui = [
