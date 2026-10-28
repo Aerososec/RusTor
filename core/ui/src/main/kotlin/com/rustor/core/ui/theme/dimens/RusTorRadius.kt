@@ -16,4 +16,4 @@ data class RusTorRadius(
     val full: Dp = 999.dp,
 )
 
-val LocalMoodReelRadius = staticCompositionLocalOf { RusTorRadius() }
+val LocalRusTorRadius = staticCompositionLocalOf { RusTorRadius() }

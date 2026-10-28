@@ -19,4 +19,4 @@ data class RusTorSpacing(
     val huge: Dp = 64.dp,
 )
 
-val LocalMoodReelSpacing = staticCompositionLocalOf { RusTorSpacing() }
+val LocalRusTorSpacing = staticCompositionLocalOf { RusTorSpacing() }
