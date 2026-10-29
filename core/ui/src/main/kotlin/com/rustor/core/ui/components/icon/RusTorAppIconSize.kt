@@ -29,6 +29,7 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme
 
 enum class RusTorAppIconSize(val size: Dp) {
@@ -117,8 +118,7 @@ private fun RusTorAppIconSize.fallbackTextStyle(): TextStyle = when (this) {
     RusTorAppIconSize.Large -> RusTorTheme.typography.headlineMedium
 }
 
-@Preview(name = "Light", showBackground = true)
-@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorAppIconPreview() {
     RusTorTheme {

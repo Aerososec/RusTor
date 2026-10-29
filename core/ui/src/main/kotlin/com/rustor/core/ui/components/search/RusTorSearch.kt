@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.rustor.core.ui.R
+import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme
 
 @Composable
@@ -107,8 +108,7 @@ fun RusTorSearchField(
     )
 }
 
-@Preview(name = "Light", showBackground = true)
-@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorSearchFieldEmptyPreview() {
     var query by remember { mutableStateOf("") }
@@ -125,8 +125,7 @@ private fun RusTorSearchFieldEmptyPreview() {
     }
 }
 
-@Preview(name = "Light", showBackground = true)
-@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorSearchFieldFilledPreview() {
     var query by remember { mutableStateOf("Финансы") }

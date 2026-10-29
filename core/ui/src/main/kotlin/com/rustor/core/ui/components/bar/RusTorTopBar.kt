@@ -1,6 +1,5 @@
 package com.rustor.core.ui.components.bar
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,9 +26,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rustor.core.ui.R
+import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme
 
 private val LogoSize = 40.dp
@@ -145,8 +144,7 @@ private fun rusTorTopBarColors(): TopAppBarColors = TopAppBarDefaults.topAppBarC
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(name = "Light", showBackground = true)
-@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorMainTopBarPreview() {
     RusTorTheme {
@@ -160,8 +158,7 @@ private fun RusTorMainTopBarPreview() {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview(name = "Light", showBackground = true)
-@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorCategoryTopBarPreview() {
     RusTorTheme {

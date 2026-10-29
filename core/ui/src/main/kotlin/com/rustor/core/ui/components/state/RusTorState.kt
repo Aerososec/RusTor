@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rustor.core.ui.R
+import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.components.button.RusTorButton
 import com.rustor.core.ui.theme.RusTorTheme
 
@@ -65,8 +66,8 @@ fun RusTorLoadingState(modifier: Modifier = Modifier, text: String? = null) {
 fun RusTorErrorState(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String = stringResource(R.string.rustor_error_title),
-    description: String = stringResource(R.string.rustor_error_description),
+    title: String,
+    description: String,
     actionText: String = stringResource(R.string.rustor_action_retry),
     icon: ImageVector = Icons.Outlined.Warning,
 ) {
@@ -167,8 +168,7 @@ private fun MessageState(
     }
 }
 
-@Preview(name = "Light", showBackground = true, heightDp = 480)
-@Preview(name = "Dark", showBackground = true, heightDp = 480, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorLoadingStatePreview() {
     RusTorTheme {
@@ -178,19 +178,21 @@ private fun RusTorLoadingStatePreview() {
     }
 }
 
-@Preview(name = "Light", showBackground = true, heightDp = 480)
-@Preview(name = "Dark", showBackground = true, heightDp = 480, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorErrorStatePreview() {
     RusTorTheme {
         Surface {
-            RusTorErrorState(onRetry = {})
+            RusTorErrorState(
+                onRetry = {},
+                title = stringResource(R.string.rustor_error_title),
+                description = stringResource(R.string.rustor_error_description)
+            )
         }
     }
 }
 
-@Preview(name = "Light", showBackground = true, heightDp = 480)
-@Preview(name = "Dark", showBackground = true, heightDp = 480, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@ThemePreviews
 @Composable
 private fun RusTorEmptyStatePreview() {
     RusTorTheme {

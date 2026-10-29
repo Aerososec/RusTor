@@ -29,10 +29,18 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.components.chip.RusTorCategoryTag
 import com.rustor.core.ui.components.icon.RusTorAppIcon
 import com.rustor.core.ui.components.icon.RusTorAppIconSize
 import com.rustor.core.ui.theme.RusTorTheme
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalDensity
+import com.rustor.core.ui.components.skeleton.RusTorSkeleton
+import com.rustor.core.ui.components.skeleton.SkeletonBlock
+import com.rustor.core.ui.components.skeleton.SkeletonTextLine
 
 private const val DEFAULT_COVER_ASPECT_RATIO = 4f / 3f
 
@@ -157,12 +165,7 @@ private fun AppCardCover(coverUrl: String?, coverTitle: String?, modifier: Modif
     }
 }
 
-@Preview(name = "Light", showBackground = true)
-@Preview(
-    name = "Dark",
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
+@ThemePreviews
 @Composable
 private fun RusTorAppCardPreview() {
     RusTorTheme {
@@ -190,6 +193,83 @@ private fun RusTorAppCardPreview() {
                     coverTitle = "Больше, чем просто игры",
                     onClick = {},
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun RusTorAppCardSkeleton(
+    modifier: Modifier = Modifier,
+    coverAspectRatio: Float = DEFAULT_COVER_ASPECT_RATIO,
+) {
+    val tagHeight = with(LocalDensity.current) {
+        RusTorTheme.typography.labelMedium.lineHeight.toDp()
+    } + RusTorTheme.spacing.xs * 2
+
+    ElevatedCard(
+        modifier = modifier,
+        shape = RoundedCornerShape(RusTorTheme.radius.xl),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = RusTorTheme.colors.surfaceContainerLow,
+        ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+    ) {
+        SkeletonBlock(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(coverAspectRatio),
+            shape = RectangleShape,
+        )
+        Column(
+            modifier = Modifier.padding(RusTorTheme.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(RusTorTheme.spacing.md),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(RusTorTheme.spacing.md),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                SkeletonBlock(
+                    modifier = Modifier.size(RusTorAppIconSize.Medium.size),
+                    shape = RoundedCornerShape(RusTorTheme.radius.lg),
+                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(RusTorTheme.spacing.xs),
+                ) {
+                    SkeletonTextLine(
+                        style = RusTorTheme.typography.titleLarge,
+                        modifier = Modifier.width(160.dp),
+                    )
+                    SkeletonBlock(
+                        modifier = Modifier
+                            .width(72.dp)
+                            .height(tagHeight),
+                        shape = RoundedCornerShape(RusTorTheme.radius.full),
+                    )
+                }
+            }
+            Column {
+                SkeletonTextLine(
+                    style = RusTorTheme.typography.bodyMedium,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                SkeletonTextLine(
+                    style = RusTorTheme.typography.bodyMedium,
+                    modifier = Modifier.fillMaxWidth(0.7f),
+                )
+            }
+        }
+    }
+}
+
+@Preview(name = "Light", showBackground = true)
+@Preview(name = "Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun RusTorAppCardSkeletonPreview() {
+    RusTorTheme {
+        Surface {
+            RusTorSkeleton(modifier = Modifier.width(360.dp)) {
+                RusTorAppCardSkeleton(modifier = Modifier.padding(RusTorTheme.spacing.lg))
             }
         }
     }

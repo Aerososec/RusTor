@@ -7,4 +7,5 @@
     <string name="rustor_action_retry">Повторить</string>
     <string name="rustor_search_placeholder">Приложения и игры</string>
     <string name="rustor_action_clear">Очистить</string>
+    <string name="rustor_loading">Загрузка</string>
 </resources>
