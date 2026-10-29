@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rustor_action_back">Назад</string>
+    <string name="rustor_action_search">Поиск</string>
+    <string name="rustor_error_title">Проверьте соединение</string>
+    <string name="rustor_error_description">Не удалось загрузить данные. Проверьте интернет и попробуйте ещё раз.</string>
+    <string name="rustor_action_retry">Повторить</string>
+    <string name="rustor_search_placeholder">Приложения и игры</string>
+    <string name="rustor_action_clear">Очистить</string>
+    <string name="rustor_loading">Загрузка</string>
+</resources>

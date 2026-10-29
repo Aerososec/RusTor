@@ -2,7 +2,6 @@ package com.rustor.core.ui.theme.color
 
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import com.rustor.core.ui.theme.color.RusTorColors
 
 internal val RusTorLightColorScheme = lightColorScheme(
     // Primary: brand blue
