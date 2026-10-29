@@ -1,6 +1,5 @@
 package com.rustor.core.ui.components.chip
 
-import android.content.res.Configuration
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme
 

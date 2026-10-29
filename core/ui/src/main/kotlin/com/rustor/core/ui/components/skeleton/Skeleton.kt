@@ -42,8 +42,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
-import com.rustor.core.ui.theme.RusTorTheme
 import com.rustor.core.ui.R
+import com.rustor.core.ui.theme.RusTorTheme
 
 private const val SHIMMER_DURATION_MILLIS = 1200
 private val SHIMMER_BAND_WIDTH = 240.dp
@@ -122,12 +122,8 @@ fun SkeletonBlock(
     )
 }
 
-
 @Composable
-fun SkeletonTextLine(
-    style: TextStyle,
-    modifier: Modifier = Modifier,
-) {
+fun SkeletonTextLine(style: TextStyle, modifier: Modifier = Modifier) {
     val density = LocalDensity.current
     val lineHeight = with(density) { style.lineHeight.takeOrElse { style.fontSize * 1.4f }.toDp() }
     val glyphHeight = with(density) { style.fontSize.toDp() }

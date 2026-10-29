@@ -1,6 +1,5 @@
 package com.rustor.core.ui.components.search
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import com.rustor.core.ui.R
 import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme

@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
@@ -21,7 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,14 +37,10 @@ import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.components.chip.RusTorCategoryTag
 import com.rustor.core.ui.components.icon.RusTorAppIcon
 import com.rustor.core.ui.components.icon.RusTorAppIconSize
-import com.rustor.core.ui.theme.RusTorTheme
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalDensity
 import com.rustor.core.ui.components.skeleton.RusTorSkeleton
 import com.rustor.core.ui.components.skeleton.SkeletonBlock
 import com.rustor.core.ui.components.skeleton.SkeletonTextLine
+import com.rustor.core.ui.theme.RusTorTheme
 
 private const val DEFAULT_COVER_ASPECT_RATIO = 4f / 3f
 
@@ -199,10 +199,7 @@ private fun RusTorAppCardPreview() {
 }
 
 @Composable
-fun RusTorAppCardSkeleton(
-    modifier: Modifier = Modifier,
-    coverAspectRatio: Float = DEFAULT_COVER_ASPECT_RATIO,
-) {
+fun RusTorAppCardSkeleton(modifier: Modifier = Modifier, coverAspectRatio: Float = DEFAULT_COVER_ASPECT_RATIO) {
     val tagHeight = with(LocalDensity.current) {
         RusTorTheme.typography.labelMedium.lineHeight.toDp()
     } + RusTorTheme.spacing.xs * 2
@@ -255,7 +252,7 @@ fun RusTorAppCardSkeleton(
                 )
                 SkeletonTextLine(
                     style = RusTorTheme.typography.bodyMedium,
-                    modifier = Modifier.fillMaxWidth(0.7f),
+                    modifier = Modifier.fillMaxWidth(COVER_TITLE_WIDTH_FRACTION),
                 )
             }
         }

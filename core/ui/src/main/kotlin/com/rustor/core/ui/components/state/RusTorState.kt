@@ -1,6 +1,5 @@
 package com.rustor.core.ui.components.state
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rustor.core.ui.R
 import com.rustor.core.ui.components.annotation.ThemePreviews
@@ -186,7 +184,7 @@ private fun RusTorErrorStatePreview() {
             RusTorErrorState(
                 onRetry = {},
                 title = stringResource(R.string.rustor_error_title),
-                description = stringResource(R.string.rustor_error_description)
+                description = stringResource(R.string.rustor_error_description),
             )
         }
     }
