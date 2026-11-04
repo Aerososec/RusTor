@@ -53,6 +53,96 @@
         "https://f-droid.org/repo/org.fossify.math/en-US/phoneScreenshots/2_en-US.png"
       ],
       "apkUrl": "https://f-droid.org/repo/org.fossify.math_10.apk"
+    },
+    {
+      "packageName": "com.rustor.demo.budget",
+      "name": "Карманный бюджет",
+      "developer": "Demo Studio",
+      "categoryId": "finance",
+      "ageRating": "0+",
+      "summary": "Учёт расходов и доходов по категориям",
+      "description": "Записывайте покупки, задавайте лимиты на месяц и смотрите, на что уходит больше всего денег."
+    },
+    {
+      "packageName": "com.rustor.demo.savings",
+      "name": "Копилка целей",
+      "developer": "Demo Studio",
+      "categoryId": "finance",
+      "ageRating": "6+",
+      "summary": "Планируйте накопления и следите за прогрессом",
+      "description": "Создайте цель, укажите нужную сумму и отмечайте пополнения по мере накопления."
+    },
+    {
+      "packageName": "com.rustor.demo.focus",
+      "name": "Таймер фокуса",
+      "developer": "Demo Studio",
+      "categoryId": "tools",
+      "ageRating": "0+",
+      "summary": "Таймер для работы и коротких перерывов",
+      "description": "Настройте длительность сеанса, запустите таймер и сделайте перерыв, когда прозвучит сигнал."
+    },
+    {
+      "packageName": "com.rustor.demo.notes",
+      "name": "Блокнот для заметок, списков покупок и ежедневных дел",
+      "developer": "Demo Studio",
+      "categoryId": "tools",
+      "ageRating": "0+",
+      "summary": "Записывайте идеи, составляйте списки покупок, планируйте дела на неделю и закрепляйте важные заметки, чтобы быстро найти их даже в большом списке.",
+      "description": "Заметки и списки сохраняются на устройстве. Важные записи можно закрепить, а выполненные пункты — отметить одним касанием."
+    },
+    {
+      "packageName": "com.rustor.demo.orbit",
+      "name": "Орбита",
+      "developer": "Demo Games",
+      "categoryId": "games",
+      "ageRating": "8+",
+      "summary": "Космическая аркада с короткими уровнями",
+      "description": "Меняйте орбиты, обходите астероиды и собирайте звёзды, чтобы открыть следующий уровень."
+    },
+    {
+      "packageName": "com.rustor.demo.tiles",
+      "name": "Мозаика",
+      "developer": "Demo Games",
+      "categoryId": "games",
+      "ageRating": "6+",
+      "summary": "Головоломка с цветными плитками",
+      "description": "Переставляйте плитки, чтобы собрать узор за заданное число ходов."
+    },
+    {
+      "packageName": "com.rustor.demo.cityguide",
+      "name": "Справочник жителя",
+      "developer": "Demo Studio",
+      "categoryId": "government",
+      "ageRating": "0+",
+      "summary": "Адреса городских учреждений и часы приёма",
+      "description": "Демонстрационный справочник городских учреждений с примерами адресов и расписаний."
+    },
+    {
+      "packageName": "com.rustor.demo.cityreport",
+      "name": "Мой район",
+      "developer": "Demo Studio",
+      "categoryId": "government",
+      "ageRating": "12+",
+      "summary": "Черновики обращений по вопросам благоустройства",
+      "description": "Учебное приложение для составления черновиков обращений. Содержит примеры тем и подсказки по заполнению."
+    },
+    {
+      "packageName": "com.rustor.demo.transit",
+      "name": "Следующая остановка",
+      "developer": "Demo Studio",
+      "categoryId": "transport",
+      "ageRating": "0+",
+      "summary": "Расписания автобусов и избранные остановки",
+      "description": "Найдите остановку по названию и сохраните её, чтобы быстро открыть демонстрационное расписание."
+    },
+    {
+      "packageName": "com.rustor.demo.parking",
+      "name": "Где припарковался",
+      "developer": "Demo Studio",
+      "categoryId": "transport",
+      "ageRating": "0+",
+      "summary": "Сохраняйте место парковки и время стоянки",
+      "description": "Поставьте метку на карте и добавьте заметку о месте парковки, чтобы найти машину после прогулки."
     }
   ]
 }

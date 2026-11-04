@@ -54,39 +54,50 @@ internal class ShowcaseViewModel @AssistedInject constructor(
 
     private val categories = catalogRepository.observeCategories()
 
-    private val selectedCategory: Flow<CategoryId?> =
-        savedStateHandle.getStateFlow<String?>(SELECTED_CATEGORY_KEY, null)
-            .map { id -> id?.let(::CategoryId) }
+    private data class FeedResult(val categoryId: CategoryId?, val apps: List<App>)
 
-    private val apps: Flow<List<App>> = when (mode) {
-        ShowcaseMode.Main -> selectedCategory.flatMapLatest { id -> observeFeedFor(id) }
-        is ShowcaseMode.Category -> observeFeedFor(mode.categoryId)
+    private val selectedCategory =
+        savedStateHandle.getStateFlow<String?>(SELECTED_CATEGORY_KEY, null)
+
+    private val feedResults: Flow<FeedResult> = when (mode) {
+        ShowcaseMode.Main -> selectedCategory.flatMapLatest { value ->
+            observeFeedResult(value?.let(::CategoryId))
+        }
+
+        is ShowcaseMode.Category -> observeFeedResult(mode.categoryId)
+    }
+
+    private fun observeFeedResult(categoryId: CategoryId?): Flow<FeedResult> = observeFeedFor(categoryId).map { apps ->
+        FeedResult(categoryId = categoryId, apps = apps)
     }
 
     val uiState: StateFlow<ShowcaseUiState> = combine(
         syncStatus,
         categories,
-        selectedCategory,
-        apps,
-    ) { status, categories, selectedCategory, apps ->
+        feedResults,
+    ) { status, categories, result ->
         ShowcaseUiState(
             header = computeHeader(
                 mode = mode,
                 categories = categories,
-                selectedCategory = selectedCategory,
+                selectedCategory = result.categoryId,
             ),
             feed = computeFeedState(
-                apps = apps,
+                apps = result.apps,
                 syncStatus = status,
                 mode = mode,
-                selectedCategory = selectedCategory,
+                selectedCategory = result.categoryId,
             ),
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = ShowcaseUiState(
-            header = computeHeader(mode, emptyList(), null),
+            header = computeHeader(
+                mode = mode,
+                categories = emptyList(),
+                selectedCategory = selectedCategory.value?.let(::CategoryId),
+            ),
             feed = FeedState.Loading,
         ),
     )

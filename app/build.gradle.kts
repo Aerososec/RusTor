@@ -38,6 +38,8 @@ dependencies {
 
     implementation(project(":core:common"))
     implementation(project(":core:database"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:model"))
     implementation(project(":data:catalog"))
     implementation(project(":feature:showcase"))
 }
