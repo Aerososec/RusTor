@@ -28,7 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
@@ -200,40 +202,57 @@ private fun ShowcaseFeed(
     modifier: Modifier = Modifier,
 ) {
     when (feed) {
-        is FeedState.Content -> VerticalPager(
-            state = pagerState,
-            key = { page -> feed.apps[page].id.value },
-            modifier = modifier,
-        ) { page ->
-            val app = feed.apps[page]
+        is FeedState.Content -> {
+            val appIds = feed.apps.map { it.id.value }
+            var previousAppIds by remember(pagerState) {
+                mutableStateOf(appIds)
+            }
 
-            BoxWithConstraints(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(RusTorTheme.spacing.lg),
-            ) {
-                val availableHeight = maxHeight
+            LaunchedEffect(pagerState, appIds) {
+                if (appIds != previousAppIds) {
+                    previousAppIds = appIds
 
-                Box(
+                    if (appIds.isNotEmpty()) {
+                        pagerState.scrollToPage(0)
+                    }
+                }
+            }
+
+            VerticalPager(
+                state = pagerState,
+                key = { page -> feed.apps[page].id.value },
+                modifier = modifier,
+            ) { page ->
+                val app = feed.apps[page]
+
+                BoxWithConstraints(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .heightIn(min = availableHeight),
-                    contentAlignment = BiasAlignment(
-                        horizontalBias = 0f,
-                        verticalBias = -0.5f,
-                    ),
+                        .fillMaxSize()
+                        .padding(RusTorTheme.spacing.lg),
                 ) {
-                    RusTorAppCard(
-                        title = app.name,
-                        category = app.category.title,
-                        description = app.summary,
-                        iconUrl = app.iconUrl,
-                        coverUrl = app.screenshots.firstOrNull(),
-                        onClick = { onAppClick(app.id) },
-                        coverAspectRatio = 4f / 5f,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+                    val availableHeight = maxHeight
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                            .heightIn(min = availableHeight),
+                        contentAlignment = BiasAlignment(
+                            horizontalBias = 0f,
+                            verticalBias = -0.5f,
+                        ),
+                    ) {
+                        RusTorAppCard(
+                            title = app.name,
+                            category = app.category.title,
+                            description = app.summary,
+                            iconUrl = app.iconUrl,
+                            coverUrl = app.screenshots.firstOrNull(),
+                            onClick = { onAppClick(app.id) },
+                            coverAspectRatio = 4f / 5f,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }
