@@ -5,8 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.rustor.core.ui.theme.RusTorTheme
-import com.rustor.feature.showcase.ShowcaseRoute
-import com.rustor.feature.showcase.uiState.ShowcaseMode
+import com.rustor.navigation.RusTorNavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -16,13 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RusTorTheme {
-                ShowcaseRoute(
-                    mode = ShowcaseMode.Main,
-                    onAppClick = {},
-                    onSearchClick = {},
-                    onAllCategoriesClick = {},
-                    onBackClick = { finish() },
-                )
+                RusTorNavDisplay()
             }
         }
     }

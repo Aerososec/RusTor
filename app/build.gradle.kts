@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.rustor.android.application)
     alias(libs.plugins.rustor.android.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -35,6 +36,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.compose.material.icons.core)
+
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     implementation(project(":core:common"))
     implementation(project(":core:database"))

@@ -1,4 +1,4 @@
-package com.rustor.core.ui.components.bar
+package com.rustor.navigation
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.navigation.RusTorTab
 
 @Composable
 fun RusTorNavigationBar(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
