@@ -1,12 +1,12 @@
 package com.rustor.feature.showcase
 
 import com.rustor.core.common.error.AppException
+import com.rustor.core.common.error.UiError
 import com.rustor.core.model.AgeRating
 import com.rustor.core.model.App
 import com.rustor.core.model.AppId
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
-import com.rustor.feature.showcase.error.UiError
 import com.rustor.feature.showcase.uiState.FeedState
 import com.rustor.feature.showcase.uiState.ShowcaseMode
 import com.rustor.feature.showcase.uiState.SyncStatus
