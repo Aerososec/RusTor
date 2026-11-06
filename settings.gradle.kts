@@ -35,6 +35,7 @@ include(":core:ui")
 //feature
 include(":feature:onboarding")
 include(":feature:showcase")
+include(":feature:categories")
 
 //data
 include(":data:catalog")

@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rustor.core.common.error.AppException
+import com.rustor.core.common.error.toUiError
 import com.rustor.core.domain.repository.CatalogRepository
 import com.rustor.core.model.App
 import com.rustor.core.model.CategoryId
@@ -16,7 +17,6 @@ import com.rustor.feature.showcase.uiState.SyncStatus
 import com.rustor.feature.showcase.uiState.SyncTrigger
 import com.rustor.feature.showcase.uiState.computeFeedState
 import com.rustor.feature.showcase.uiState.computeHeader
-import com.rustor.feature.showcase.uiState.toShowcaseError
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -157,7 +157,7 @@ internal class ShowcaseViewModel @AssistedInject constructor(
             } catch (e: AppException) {
                 syncStatus.value = SyncStatus.Failed(e)
                 if (trigger == SyncTrigger.User && shouldShowErrorAsSnackbar()) {
-                    _effects.send(ShowcaseSideEffect.ShowSnackbarError(e.toShowcaseError()))
+                    _effects.send(ShowcaseSideEffect.ShowSnackbarError(e.toUiError()))
                 }
             }
         }

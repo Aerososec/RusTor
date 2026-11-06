@@ -6,7 +6,7 @@ import com.rustor.core.model.App
 import com.rustor.core.model.AppId
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
-import com.rustor.feature.showcase.error.ShowcaseError
+import com.rustor.feature.showcase.error.UiError
 import com.rustor.feature.showcase.uiState.FeedState
 import com.rustor.feature.showcase.uiState.ShowcaseMode
 import com.rustor.feature.showcase.uiState.SyncStatus
@@ -120,7 +120,7 @@ class ComputeFeedStateTest {
             selectedCategory = null,
         )
 
-        assertEquals(FeedState.Error(ShowcaseError.Unknown), result)
+        assertEquals(FeedState.Error(UiError.Unknown), result)
     }
 
     @Test

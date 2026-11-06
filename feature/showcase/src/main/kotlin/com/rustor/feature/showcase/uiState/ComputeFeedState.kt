@@ -1,9 +1,8 @@
 package com.rustor.feature.showcase.uiState
 
-import com.rustor.core.common.error.AppException
+import com.rustor.core.common.error.toUiError
 import com.rustor.core.model.App
 import com.rustor.core.model.CategoryId
-import com.rustor.feature.showcase.error.ShowcaseError
 
 internal fun computeFeedState(
     apps: List<App>?,
@@ -23,13 +22,7 @@ internal fun computeFeedState(
 
     return when (syncStatus) {
         is SyncStatus.Syncing -> FeedState.Loading
-        is SyncStatus.Failed -> FeedState.Error(syncStatus.error.toShowcaseError())
+        is SyncStatus.Failed -> FeedState.Error(syncStatus.error.toUiError())
         SyncStatus.Idle -> FeedState.EmptyCatalog
     }
-}
-
-internal fun AppException.toShowcaseError(): ShowcaseError = when (this) {
-    is AppException.NoInternet, is AppException.Timeout -> ShowcaseError.NoConnection
-    is AppException.Parsing -> ShowcaseError.ServiceUnavailable
-    is AppException.Unknown -> ShowcaseError.Unknown
 }

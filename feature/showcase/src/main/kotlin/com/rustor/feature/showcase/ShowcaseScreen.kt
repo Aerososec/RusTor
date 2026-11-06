@@ -40,6 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.rustor.core.common.error.UiError
 import com.rustor.core.model.AppId
 import com.rustor.core.model.CategoryId
 import com.rustor.core.ui.components.bar.RusTorCategoryTopBar
@@ -50,7 +51,6 @@ import com.rustor.core.ui.components.chip.RusTorFilterChip
 import com.rustor.core.ui.components.state.RusTorEmptyState
 import com.rustor.core.ui.components.state.RusTorErrorState
 import com.rustor.core.ui.theme.RusTorTheme
-import com.rustor.feature.showcase.error.ShowcaseError
 import com.rustor.feature.showcase.ui.showcaseFeed.ShowcaseFeedSkeleton
 import com.rustor.feature.showcase.uiState.FeedState
 import com.rustor.feature.showcase.uiState.ShowcaseHeader
@@ -321,8 +321,8 @@ private fun CategoryChips(
     }
 }
 
-private fun ShowcaseError.userMessage(): String = when (this) {
-    ShowcaseError.NoConnection -> "Проверь подключение к интернету."
-    ShowcaseError.ServiceUnavailable -> "Сервис временно недоступен."
-    ShowcaseError.Unknown -> "Попробуй ещё раз."
+private fun UiError.userMessage(): String = when (this) {
+    UiError.NoConnection -> "Проверь подключение к интернету."
+    UiError.ServiceUnavailable -> "Сервис временно недоступен."
+    UiError.Unknown -> "Попробуй ещё раз."
 }

@@ -1,8 +1,8 @@
 package com.rustor.feature.showcase.uiState
 
-import com.rustor.feature.showcase.error.ShowcaseError
+import com.rustor.core.common.error.UiError
 
 sealed interface ShowcaseSideEffect {
     data object ScrollToTop : ShowcaseSideEffect
-    data class ShowSnackbarError(val error: ShowcaseError) : ShowcaseSideEffect
+    data class ShowSnackbarError(val error: UiError) : ShowcaseSideEffect
 }

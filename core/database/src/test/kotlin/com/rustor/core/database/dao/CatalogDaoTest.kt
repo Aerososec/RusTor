@@ -157,6 +157,44 @@ class CatalogDaoTest {
         assertEquals(emptyMap<String, Int>(), positions)
     }
 
+    @Test
+    fun `category summaries include empty categories and update counts`() = runTest {
+        dao.observeCategorySummaries().test {
+            assertEquals(emptyList<Any>(), awaitItem())
+
+            val categories = listOf(
+                category("games", title = "Игры"),
+                category("tools", title = "Инструменты"),
+            )
+
+            dao.replaceCatalog(
+                categories = categories,
+                apps = listOf(
+                    app("game.one", categoryId = "games"),
+                    app("game.two", categoryId = "games"),
+                ),
+            )
+
+            val initial = awaitItem()
+
+            assertEquals(listOf("games", "tools"), initial.map { it.id })
+            assertEquals(listOf("Игры", "Инструменты"), initial.map { it.title })
+            assertEquals(listOf(2, 0), initial.map { it.appCount })
+
+            dao.replaceCatalog(
+                categories = categories,
+                apps = listOf(app("tool.one", categoryId = "tools")),
+            )
+
+            val updated = awaitItem()
+
+            assertEquals(listOf("games", "tools"), updated.map { it.id })
+            assertEquals(listOf(0, 1), updated.map { it.appCount })
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     private fun category(id: String, title: String = id) = CategoryEntity(id = id, title = title)
 
     private fun app(id: String, categoryId: String = "tools", feedPosition: Int = 0) = AppEntity(

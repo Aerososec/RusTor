@@ -8,4 +8,11 @@
     <string name="rustor_search_placeholder">Приложения и игры</string>
     <string name="rustor_action_clear">Очистить</string>
     <string name="rustor_loading">Загрузка</string>
+
+    <plurals name="rustor_category_app_count">
+        <item quantity="one">%d приложение</item>
+        <item quantity="few">%d приложения</item>
+        <item quantity="many">%d приложений</item>
+        <item quantity="other">%d приложения</item>
+    </plurals>
 </resources>

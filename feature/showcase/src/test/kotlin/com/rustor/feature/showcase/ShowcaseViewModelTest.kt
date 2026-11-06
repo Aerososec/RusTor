@@ -7,7 +7,7 @@ import com.rustor.core.model.App
 import com.rustor.core.model.AppId
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
-import com.rustor.feature.showcase.error.ShowcaseError
+import com.rustor.feature.showcase.error.UiError
 import com.rustor.feature.showcase.fake.FakeCatalogRepository
 import com.rustor.feature.showcase.fake.MainDispatcherRule
 import com.rustor.feature.showcase.uiState.FeedState
@@ -82,7 +82,7 @@ class ShowcaseViewModelTest {
         advanceUntilIdle()
 
         assertEquals(FeedState.Content(someApps, isRefreshing = false), viewModel.uiState.value.feed)
-        assertEquals(listOf(ShowcaseSideEffect.ShowSnackbarError(ShowcaseError.NoConnection)), effects)
+        assertEquals(listOf(ShowcaseSideEffect.ShowSnackbarError(UiError.NoConnection)), effects)
     }
 
     @Test
@@ -96,7 +96,7 @@ class ShowcaseViewModelTest {
         viewModel.onIntent(ShowcaseIntent.Refresh)
         advanceUntilIdle()
 
-        assertEquals(FeedState.Error(ShowcaseError.NoConnection), viewModel.uiState.value.feed)
+        assertEquals(FeedState.Error(UiError.NoConnection), viewModel.uiState.value.feed)
         assertTrue(effects.isEmpty())
     }
 

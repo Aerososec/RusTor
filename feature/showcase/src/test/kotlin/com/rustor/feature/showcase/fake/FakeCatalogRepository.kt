@@ -5,12 +5,13 @@ import com.rustor.core.domain.repository.CatalogRepository
 import com.rustor.core.model.App
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
+import com.rustor.core.model.CategorySummary
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.cancellation.CancellationException
-
 internal class FakeCatalogRepository : CatalogRepository {
 
     val feed = MutableStateFlow<List<App>>(emptyList())
@@ -45,4 +46,17 @@ internal class FakeCatalogRepository : CatalogRepository {
         }
         refreshError?.let { throw it }
     }
+
+    override fun observeCategorySummaries(): Flow<List<CategorySummary>> =
+        combine(categories, feed) { categories, apps ->
+            val counts = apps.groupingBy { it.category.id }.eachCount()
+
+            categories.map { category ->
+                CategorySummary(
+                    id = category.id,
+                    title = category.title,
+                    appCount = counts[category.id] ?: 0,
+                )
+            }
+        }
 }

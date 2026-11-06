@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import com.rustor.core.database.entity.AppEntity
 import com.rustor.core.database.entity.AppWithCategory
 import com.rustor.core.database.entity.CategoryEntity
+import com.rustor.core.database.entity.CategorySummaryRow
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -50,4 +51,18 @@ abstract class CatalogDao {
         @MapColumn("feed_position")
         Int,
         >
+
+    @Query(
+        """
+    SELECT
+        categories.id AS id,
+        categories.title AS title,
+        COUNT(apps.id) AS appCount
+    FROM categories
+    LEFT JOIN apps ON apps.category_id = categories.id
+    GROUP BY categories.id, categories.title
+    ORDER BY categories.title, categories.id
+    """,
+    )
+    abstract fun observeCategorySummaries(): Flow<List<CategorySummaryRow>>
 }

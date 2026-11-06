@@ -5,6 +5,7 @@ import com.rustor.core.domain.repository.CatalogRepository
 import com.rustor.core.model.App
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
+import com.rustor.core.model.CategorySummary
 import com.rustor.data.catalog.dataSourse.CatalogRemoteDataSource
 import com.rustor.data.catalog.mappers.assignPositions
 import com.rustor.data.catalog.mappers.mapErrors
@@ -48,4 +49,9 @@ internal class CatalogRepositoryImpl @Inject constructor(
             catalogDao.replaceCatalog(entities.categories, ordered)
         }
     }
+
+    override fun observeCategorySummaries(): Flow<List<CategorySummary>> =
+        catalogDao.observeCategorySummaries().map { rows ->
+            rows.map { it.toDomain() }
+        }
 }
