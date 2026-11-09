@@ -90,7 +90,7 @@ fun RusTorMainTopBar(
 @Composable
 fun RusTorCategoryTopBar(
     title: String,
-    onBackClick: () -> Unit,
+    onBackClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     onSearchClick: (() -> Unit)? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
@@ -106,11 +106,15 @@ fun RusTorCategoryTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                    contentDescription = stringResource(R.string.rustor_action_back),
-                )
+            if (onBackClick != null) {
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = stringResource(
+                            R.string.rustor_action_back,
+                        ),
+                    )
+                }
             }
         },
         actions = {

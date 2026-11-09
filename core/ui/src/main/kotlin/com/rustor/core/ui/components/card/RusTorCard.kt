@@ -42,7 +42,7 @@ import com.rustor.core.ui.components.skeleton.SkeletonBlock
 import com.rustor.core.ui.components.skeleton.SkeletonTextLine
 import com.rustor.core.ui.theme.RusTorTheme
 
-private const val DEFAULT_COVER_ASPECT_RATIO = 4f / 3f
+private const val DEFAULT_COVER_ASPECT_RATIO = 4f / 5f
 
 private const val COVER_TITLE_WIDTH_FRACTION = 0.7f
 private const val COVER_SCRIM_END_FRACTION = 0.6f

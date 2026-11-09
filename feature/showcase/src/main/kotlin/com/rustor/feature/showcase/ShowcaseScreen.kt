@@ -31,7 +31,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -259,7 +258,10 @@ private fun ShowcaseFeed(
 
         else -> Box(
             modifier = modifier,
-            contentAlignment = Alignment.Center,
+            contentAlignment = BiasAlignment(
+                horizontalBias = 0f,
+                verticalBias = -0.5f,
+            ),
         ) {
             when (feed) {
                 FeedState.Loading -> ShowcaseFeedSkeleton()

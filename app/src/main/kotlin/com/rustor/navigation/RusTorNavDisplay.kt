@@ -21,6 +21,8 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.rustor.core.model.CategoryId
+import com.rustor.feature.categories.CategoriesRoute
 import com.rustor.feature.showcase.ShowcaseRoute
 import com.rustor.feature.showcase.uiState.ShowcaseMode
 
@@ -52,7 +54,42 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
         }
 
         entry<CategoriesKey> {
-            CategoriesPlaceholderScreen()
+            CategoriesRoute(
+                onCategoryClick = { categoryId ->
+                    categoriesBackStack.add(
+                        CategoryShowcaseKey(categoryId.value),
+                    )
+                },
+                onBackClick = {
+                    if (categoriesBackStack.size > 1) {
+                        categoriesBackStack.removeLastOrNull()
+                    }
+                },
+                onSearchClick = {
+                    currentTab = RusTorTab.SEARCH
+                },
+            )
+        }
+
+        entry<CategoryShowcaseKey> { key ->
+            val categoryMode = ShowcaseMode.Category(CategoryId(key.categoryId))
+            ShowcaseRoute(
+                mode = categoryMode,
+                onAppClick = { _ ->
+                    // Переход на карточку приложения появится позже.
+                },
+                onSearchClick = {
+                    currentTab = RusTorTab.SEARCH
+                },
+                onAllCategoriesClick = {
+                    currentTab = RusTorTab.CATEGORIES
+                },
+                onBackClick = {
+                    if (categoriesBackStack.size > 1) {
+                        categoriesBackStack.removeLastOrNull()
+                    }
+                },
+            )
         }
 
         entry<SearchKey> {
@@ -112,16 +149,6 @@ private fun rememberTabEntries(
     ),
     entryProvider = provider,
 )
-
-@Composable
-fun CategoriesPlaceholderScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "Экран категорий")
-    }
-}
 
 @Composable
 fun SearchPlaceholderScreen(modifier: Modifier = Modifier) {

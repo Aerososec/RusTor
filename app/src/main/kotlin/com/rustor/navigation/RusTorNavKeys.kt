@@ -10,4 +10,7 @@ data object ShowcaseKey : NavKey
 data object CategoriesKey : NavKey
 
 @Serializable
+data class CategoryShowcaseKey(val categoryId: String) : NavKey
+
+@Serializable
 data object SearchKey : NavKey

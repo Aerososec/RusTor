@@ -48,4 +48,5 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":data:catalog"))
     implementation(project(":feature:showcase"))
+    implementation(project(":feature:categories"))
 }

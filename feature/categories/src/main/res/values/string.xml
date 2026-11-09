@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="categories_title">Категории</string>
+    <string name="categories_loading">Загружаем категории…</string>
+
+    <string name="categories_empty_title">Категорий пока нет</string>
+    <string name="categories_empty_description">Попробуйте обновить каталог позже.</string>
+
+    <string name="categories_refresh">Обновить</string>
+    <string name="categories_retry">Повторить</string>
+
+    <string name="categories_error_title">Не удалось загрузить категории</string>
+</resources>
