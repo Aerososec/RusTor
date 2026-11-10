@@ -21,7 +21,10 @@ import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.rustor.core.model.AppId
 import com.rustor.core.model.CategoryId
+import com.rustor.core.ui.components.details.RusTorScreenshotViewer
+import com.rustor.feature.appdetails.AppDetailsRoute
 import com.rustor.feature.categories.CategoriesRoute
 import com.rustor.feature.showcase.ShowcaseRoute
 import com.rustor.feature.showcase.uiState.ShowcaseMode
@@ -36,70 +39,22 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
     val categoriesBackStack = rememberNavBackStack(CategoriesKey)
     val searchBackStack = rememberNavBackStack(SearchKey)
 
-    val provider = entryProvider<NavKey> {
-        entry<ShowcaseKey> {
-            ShowcaseRoute(
-                mode = ShowcaseMode.Main,
-                onAppClick = { _ ->
-                    // Переход на карточку приложения появится позже.
-                },
-                onSearchClick = {
-                    currentTab = RusTorTab.SEARCH
-                },
-                onAllCategoriesClick = {
-                    currentTab = RusTorTab.CATEGORIES
-                },
-                onBackClick = {},
-            )
-        }
-
-        entry<CategoriesKey> {
-            CategoriesRoute(
-                onCategoryClick = { categoryId ->
-                    categoriesBackStack.add(
-                        CategoryShowcaseKey(categoryId.value),
-                    )
-                },
-                onBackClick = {
-                    if (categoriesBackStack.size > 1) {
-                        categoriesBackStack.removeLastOrNull()
-                    }
-                },
-                onSearchClick = {
-                    currentTab = RusTorTab.SEARCH
-                },
-            )
-        }
-
-        entry<CategoryShowcaseKey> { key ->
-            val categoryMode = ShowcaseMode.Category(CategoryId(key.categoryId))
-            ShowcaseRoute(
-                mode = categoryMode,
-                onAppClick = { _ ->
-                    // Переход на карточку приложения появится позже.
-                },
-                onSearchClick = {
-                    currentTab = RusTorTab.SEARCH
-                },
-                onAllCategoriesClick = {
-                    currentTab = RusTorTab.CATEGORIES
-                },
-                onBackClick = {
-                    if (categoriesBackStack.size > 1) {
-                        categoriesBackStack.removeLastOrNull()
-                    }
-                },
-            )
-        }
-
-        entry<SearchKey> {
-            SearchPlaceholderScreen()
-        }
+    val onTabSelected: (RusTorTab) -> Unit = { tab ->
+        currentTab = tab
     }
 
-    val showcaseEntries = rememberTabEntries(showcaseBackStack, provider)
-    val categoriesEntries = rememberTabEntries(categoriesBackStack, provider)
-    val searchEntries = rememberTabEntries(searchBackStack, provider)
+    val showcaseEntries = rememberTabEntries(
+        backStack = showcaseBackStack,
+        onTabSelected = onTabSelected,
+    )
+    val categoriesEntries = rememberTabEntries(
+        backStack = categoriesBackStack,
+        onTabSelected = onTabSelected,
+    )
+    val searchEntries = rememberTabEntries(
+        backStack = searchBackStack,
+        onTabSelected = onTabSelected,
+    )
 
     val activeBackStack = when (currentTab) {
         RusTorTab.SHOWCASE -> showcaseBackStack
@@ -116,19 +71,19 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier,
         bottomBar = {
-            RusTorBottomBar(
-                modifier = Modifier,
-                curTab = currentTab,
-                onTabClick = { tab -> currentTab = tab },
-            )
+            if (activeBackStack.lastOrNull() !is ScreenshotsKey) {
+                RusTorBottomBar(
+                    curTab = currentTab,
+                    onTabClick = onTabSelected,
+                    modifier = modifier,
+                )
+            }
         },
     ) { innerPadding ->
         NavDisplay(
             entries = activeEntries,
             onBack = {
-                if (activeBackStack.size > 1) {
-                    activeBackStack.removeLastOrNull()
-                }
+                activeBackStack.popBackStack()
             },
             modifier = Modifier
                 .padding(innerPadding)
@@ -137,18 +92,115 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
     }
 }
 
+private fun createEntryProvider(
+    backStack: MutableList<NavKey>,
+    onTabSelected: (RusTorTab) -> Unit,
+): (NavKey) -> NavEntry<NavKey> = entryProvider<NavKey> {
+    entry<ShowcaseKey> {
+        ShowcaseRoute(
+            mode = ShowcaseMode.Main,
+            onAppClick = { appId ->
+                backStack.add(AppDetailsKey(appId.value))
+            },
+            onSearchClick = {
+                onTabSelected(RusTorTab.SEARCH)
+            },
+            onAllCategoriesClick = {
+                onTabSelected(RusTorTab.CATEGORIES)
+            },
+            onBackClick = {},
+        )
+    }
+
+    entry<CategoriesKey> {
+        CategoriesRoute(
+            onCategoryClick = { categoryId ->
+                backStack.add(CategoryShowcaseKey(categoryId.value))
+            },
+            onBackClick = {
+                backStack.popBackStack()
+            },
+            onSearchClick = {
+                onTabSelected(RusTorTab.SEARCH)
+            },
+        )
+    }
+
+    entry<CategoryShowcaseKey> { key ->
+        ShowcaseRoute(
+            mode = ShowcaseMode.Category(CategoryId(key.categoryId)),
+            onAppClick = { appId ->
+                backStack.add(AppDetailsKey(appId.value))
+            },
+            onSearchClick = {
+                onTabSelected(RusTorTab.SEARCH)
+            },
+            onAllCategoriesClick = {
+                onTabSelected(RusTorTab.CATEGORIES)
+            },
+            onBackClick = {
+                backStack.popBackStack()
+            },
+        )
+    }
+
+    entry<SearchKey> {
+        SearchPlaceholderScreen()
+    }
+
+    entry<AppDetailsKey> { key ->
+        AppDetailsRoute(
+            appId = AppId(key.appId),
+            onBackClick = {
+                backStack.popBackStack()
+            },
+            onScreenshotClick = { urls, index ->
+                backStack.add(
+                    ScreenshotsKey(
+                        screenshotUrls = urls.toList(),
+                        initialIndex = index,
+                    ),
+                )
+            },
+        )
+    }
+
+    entry<ScreenshotsKey> { key ->
+        RusTorScreenshotViewer(
+            screenshotUrls = key.screenshotUrls,
+            initialIndex = key.initialIndex,
+            onBackClick = {
+                backStack.popBackStack()
+            },
+        )
+    }
+}
+
 @Composable
 private fun rememberTabEntries(
-    backStack: List<NavKey>,
-    provider: (NavKey) -> NavEntry<NavKey>,
-): List<NavEntry<NavKey>> = rememberDecoratedNavEntries(
-    backStack = backStack,
-    entryDecorators = listOf(
-        rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
-        rememberViewModelStoreNavEntryDecorator<NavKey>(),
-    ),
-    entryProvider = provider,
-)
+    backStack: MutableList<NavKey>,
+    onTabSelected: (RusTorTab) -> Unit,
+): List<NavEntry<NavKey>> {
+    val provider = createEntryProvider(
+        backStack = backStack,
+        onTabSelected = onTabSelected,
+    )
+
+    return rememberDecoratedNavEntries(
+        backStack = backStack,
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+            rememberViewModelStoreNavEntryDecorator<NavKey>(),
+        ),
+        entryProvider = provider,
+    )
+}
+
+private fun MutableList<NavKey>.popBackStack() {
+    if (size > 1) {
+        removeLastOrNull()
+    }
+}
 
 @Composable
 fun SearchPlaceholderScreen(modifier: Modifier = Modifier) {

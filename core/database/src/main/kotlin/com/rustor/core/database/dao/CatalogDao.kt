@@ -18,6 +18,10 @@ abstract class CatalogDao {
     abstract fun observeFeed(): Flow<List<AppWithCategory>>
 
     @Transaction
+    @Query("SELECT * FROM apps WHERE id = :appId")
+    abstract fun observeApp(appId: String): Flow<AppWithCategory?>
+
+    @Transaction
     @Query("SELECT * FROM apps WHERE category_id = :categoryId ORDER BY feed_position")
     abstract fun observeFeedByCategory(categoryId: String): Flow<List<AppWithCategory>>
 

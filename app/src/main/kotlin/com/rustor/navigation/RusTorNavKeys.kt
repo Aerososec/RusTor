@@ -14,3 +14,9 @@ data class CategoryShowcaseKey(val categoryId: String) : NavKey
 
 @Serializable
 data object SearchKey : NavKey
+
+@Serializable
+data class AppDetailsKey(val appId: String) : NavKey
+
+@Serializable
+data class ScreenshotsKey(val screenshotUrls: List<String>, val initialIndex: Int) : NavKey

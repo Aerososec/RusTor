@@ -1,8 +1,11 @@
 package com.rustor.data.catalog.repository
 
+import android.database.sqlite.SQLiteException
+import com.rustor.core.common.error.AppException
 import com.rustor.core.database.dao.CatalogDao
 import com.rustor.core.domain.repository.CatalogRepository
 import com.rustor.core.model.App
+import com.rustor.core.model.AppId
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
 import com.rustor.core.model.CategorySummary
@@ -12,6 +15,7 @@ import com.rustor.data.catalog.mappers.mapErrors
 import com.rustor.data.catalog.mappers.toDomain
 import com.rustor.data.catalog.mappers.toEntities
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -53,5 +57,16 @@ internal class CatalogRepositoryImpl @Inject constructor(
     override fun observeCategorySummaries(): Flow<List<CategorySummary>> =
         catalogDao.observeCategorySummaries().map { rows ->
             rows.map { it.toDomain() }
+        }
+
+    override fun observeApp(appId: AppId): Flow<App?> = catalogDao.observeApp(appId.value)
+        .map { app ->
+            app?.toDomain()
+        }
+        .catch { error ->
+            when (error) {
+                is SQLiteException -> throw AppException.Unknown(error)
+                else -> throw error
+            }
         }
 }

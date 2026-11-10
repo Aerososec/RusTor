@@ -49,4 +49,5 @@ dependencies {
     implementation(project(":data:catalog"))
     implementation(project(":feature:showcase"))
     implementation(project(":feature:categories"))
+    implementation(project(":feature:appdetails"))
 }

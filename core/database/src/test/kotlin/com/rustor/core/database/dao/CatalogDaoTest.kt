@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertNull
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
@@ -190,6 +191,60 @@ class CatalogDaoTest {
 
             assertEquals(listOf("games", "tools"), updated.map { it.id })
             assertEquals(listOf(0, 1), updated.map { it.appCount })
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `observe app emits missing inserted updated and deleted item`() = runTest {
+        val appId = "game.one"
+        val initialCategory = category("games", title = "Игры")
+        val initialApp = app(appId, categoryId = "games")
+        val otherApp = app("game.two", categoryId = "games")
+
+        dao.observeApp(appId).test {
+            assertNull(awaitItem())
+
+            dao.replaceCatalog(
+                categories = listOf(initialCategory),
+                apps = listOf(initialApp, otherApp),
+            )
+
+            assertEquals(
+                AppWithCategory(
+                    app = initialApp,
+                    category = initialCategory,
+                ),
+                awaitItem(),
+            )
+
+            val updatedApp = initialApp.copy(
+                description = "Updated description",
+            )
+            val updatedCategory = initialCategory.copy(
+                title = "Обновлённые игры",
+            )
+
+            dao.replaceCatalog(
+                categories = listOf(updatedCategory),
+                apps = listOf(updatedApp, otherApp),
+            )
+
+            assertEquals(
+                AppWithCategory(
+                    app = updatedApp,
+                    category = updatedCategory,
+                ),
+                awaitItem(),
+            )
+
+            dao.replaceCatalog(
+                categories = listOf(updatedCategory),
+                apps = listOf(otherApp),
+            )
+
+            assertNull(awaitItem())
 
             cancelAndIgnoreRemainingEvents()
         }

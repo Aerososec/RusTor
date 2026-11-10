@@ -3,6 +3,7 @@ package com.rustor.feature.showcase.fake
 import com.rustor.core.common.error.AppException
 import com.rustor.core.domain.repository.CatalogRepository
 import com.rustor.core.model.App
+import com.rustor.core.model.AppId
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
 import com.rustor.core.model.CategorySummary
@@ -59,4 +60,8 @@ internal class FakeCatalogRepository : CatalogRepository {
                 )
             }
         }
+
+    override fun observeApp(appId: AppId): Flow<App?> = feed.map { apps ->
+        apps.find { it.id == appId }
+    }
 }
