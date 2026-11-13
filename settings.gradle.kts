@@ -37,6 +37,7 @@ include(":feature:onboarding")
 include(":feature:showcase")
 include(":feature:categories")
 include(":feature:appdetails")
+include(":feature:search")
 
 //data
 include(":data:catalog")

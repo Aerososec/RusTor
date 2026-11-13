@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rustor_search_all">Все</string>
+    <string name="rustor_search_popular">Популярные приложения</string>
+    <string name="rustor_search_no_results">Ничего не найдено</string>
+    <string name="rustor_search_change_query">Попробуйте другое название или измените категорию.</string>
+    <string name="rustor_search_empty">Приложений пока нет</string>
+    <string name="rustor_search_error">Не удалось загрузить приложения</string>
+</resources>
