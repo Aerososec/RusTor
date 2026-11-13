@@ -64,4 +64,7 @@ internal class FakeAppDetailsRepository(cachedApp: App?) : CatalogRepository {
 
     override fun observeCategorySummaries(): Flow<List<CategorySummary>> =
         error("AppDetailsViewModel does not observe category summaries")
+
+    override fun observePopularApps(): Flow<List<App>> =
+        error("Popular apps observation is not supported by this test fake")
 }

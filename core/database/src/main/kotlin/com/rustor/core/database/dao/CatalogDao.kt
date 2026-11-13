@@ -9,6 +9,7 @@ import com.rustor.core.database.entity.AppEntity
 import com.rustor.core.database.entity.AppWithCategory
 import com.rustor.core.database.entity.CategoryEntity
 import com.rustor.core.database.entity.CategorySummaryRow
+import com.rustor.core.database.entity.PopularAppEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -29,11 +30,18 @@ abstract class CatalogDao {
     abstract fun observeCategories(): Flow<List<CategoryEntity>>
 
     @Transaction
-    open suspend fun replaceCatalog(categories: List<CategoryEntity>, apps: List<AppEntity>) {
+    open suspend fun replaceCatalog(
+        categories: List<CategoryEntity>,
+        apps: List<AppEntity>,
+        popularApps: List<PopularAppEntity> = emptyList(),
+    ) {
+        deleteAllPopularApps()
         deleteAllApps()
         deleteAllCategories()
+
         insertCategories(categories)
         insertApps(apps)
+        insertPopularApps(popularApps)
     }
 
     @Query("DELETE FROM apps")
@@ -69,4 +77,21 @@ abstract class CatalogDao {
     """,
     )
     abstract fun observeCategorySummaries(): Flow<List<CategorySummaryRow>>
+
+    @Transaction
+    @Query(
+        """
+    SELECT apps.*
+    FROM apps
+    INNER JOIN popular_apps ON apps.id = popular_apps.app_id
+    ORDER BY popular_apps.position, popular_apps.app_id
+    """,
+    )
+    abstract fun observePopularApps(): Flow<List<AppWithCategory>>
+
+    @Query("DELETE FROM popular_apps")
+    protected abstract suspend fun deleteAllPopularApps()
+
+    @Insert
+    protected abstract suspend fun insertPopularApps(popularApps: List<PopularAppEntity>)
 }

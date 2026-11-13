@@ -50,7 +50,11 @@ internal class CatalogRepositoryImpl @Inject constructor(
             val existing = if (reshuffle) emptyMap() else catalogDao.getFeedPositions()
             val ordered = assignPositions(entities.apps, existing, random)
 
-            catalogDao.replaceCatalog(entities.categories, ordered)
+            catalogDao.replaceCatalog(
+                categories = entities.categories,
+                apps = ordered,
+                popularApps = entities.popularApps,
+            )
         }
     }
 
@@ -62,6 +66,17 @@ internal class CatalogRepositoryImpl @Inject constructor(
     override fun observeApp(appId: AppId): Flow<App?> = catalogDao.observeApp(appId.value)
         .map { app ->
             app?.toDomain()
+        }
+        .catch { error ->
+            when (error) {
+                is SQLiteException -> throw AppException.Unknown(error)
+                else -> throw error
+            }
+        }
+
+    override fun observePopularApps(): Flow<List<App>> = catalogDao.observePopularApps()
+        .map { apps ->
+            apps.map { it.toDomain() }
         }
         .catch { error ->
             when (error) {

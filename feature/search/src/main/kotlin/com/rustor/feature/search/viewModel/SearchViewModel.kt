@@ -53,6 +53,10 @@ class SearchViewModel @Inject constructor(private val repository: CatalogReposit
         repository.observeFeed()
     }
 
+    private val popularApps = observeWithRetry {
+        repository.observePopularApps()
+    }
+
     private val categories = observeWithRetry {
         repository.observeCategories()
     }
@@ -68,28 +72,31 @@ class SearchViewModel @Inject constructor(private val repository: CatalogReposit
             if (text.isEmpty()) 0L else SEARCH_DEBOUNCE_MS
         }
 
-    private val searchResultState: Flow<Pair<CategoryId?, SearchResultsState>> = combine(
-        apps,
-        selectedCategory,
-        searchQuery,
-    ) { appsResult, categoryId, text ->
-        val results = appsResult.fold(
-            onSuccess = { catalog ->
-                computeSearchResultState(
-                    catalog = catalog,
-                    text = text,
-                    categoryId = categoryId,
-                )
-            },
-            onFailure = { error ->
-                SearchResultsState.Error(error.toReadUiError())
-            },
-        )
+    private val searchResultState: Flow<Pair<CategoryId?, SearchResultsState>> =
+        combine(
+            apps,
+            popularApps,
+            selectedCategory,
+            searchQuery,
+        ) { appsResult, popularAppsResult, categoryId, text ->
+            val results = appsResult.fold(
+                onSuccess = { catalog ->
+                    computeSearchResultState(
+                        catalog = catalog,
+                        popularAppsResult = popularAppsResult,
+                        text = text,
+                        categoryId = categoryId,
+                    )
+                },
+                onFailure = { error ->
+                    SearchResultsState.Error(error.toReadUiError())
+                },
+            )
 
-        categoryId to results
-    }.onStart {
-        emit(selectedCategory.value to SearchResultsState.Loading)
-    }
+            categoryId to results
+        }.onStart {
+            emit(selectedCategory.value to SearchResultsState.Loading)
+        }
 
     val uiState: StateFlow<SearchUiState> = combine(
         categories,
@@ -179,6 +186,7 @@ class SearchViewModel @Inject constructor(private val repository: CatalogReposit
 
     private fun computeSearchResultState(
         catalog: List<App>,
+        popularAppsResult: Result<List<App>>,
         text: String,
         categoryId: CategoryId?,
     ): SearchResultsState {
@@ -193,14 +201,19 @@ class SearchViewModel @Inject constructor(private val repository: CatalogReposit
             }
         }
 
-        val popularApps = search("", catalog, categoryId)
-
-        return SearchResultsState.Content(
-            apps = popularApps,
-            kind = if (text.isEmpty()) {
-                SearchResultKind.Popular
-            } else {
-                SearchResultKind.NoMatches
+        return popularAppsResult.fold(
+            onSuccess = { popularApps ->
+                SearchResultsState.Content(
+                    apps = popularApps,
+                    kind = if (text.isEmpty()) {
+                        SearchResultKind.Popular
+                    } else {
+                        SearchResultKind.NoMatches
+                    },
+                )
+            },
+            onFailure = { error ->
+                SearchResultsState.Error(error.toReadUiError())
             },
         )
     }

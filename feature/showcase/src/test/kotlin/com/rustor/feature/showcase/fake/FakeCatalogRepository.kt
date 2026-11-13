@@ -64,4 +64,7 @@ internal class FakeCatalogRepository : CatalogRepository {
     override fun observeApp(appId: AppId): Flow<App?> = feed.map { apps ->
         apps.find { it.id == appId }
     }
+
+    override fun observePopularApps(): Flow<List<App>> =
+        error("Popular apps observation is not supported by this test fake")
 }

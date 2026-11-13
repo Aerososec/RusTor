@@ -19,4 +19,6 @@ interface CatalogRepository {
     fun observeCategorySummaries(): Flow<List<CategorySummary>>
 
     fun observeApp(appId: AppId): Flow<App?>
+
+    fun observePopularApps(): Flow<List<App>>
 }
