@@ -10,6 +10,7 @@ data class SearchUiState(
     val categories: List<Category> = emptyList(),
     val selectedCategoryId: CategoryId? = null,
     val results: SearchResultsState = SearchResultsState.Loading,
+    val isRefreshing: Boolean = false,
 )
 
 sealed interface SearchResultsState {
@@ -17,8 +18,7 @@ sealed interface SearchResultsState {
 
     data class Error(val error: UiError) : SearchResultsState
 
-    data class Content(val apps: List<App>, val kind: SearchResultKind, val isRefreshing: Boolean = false) :
-        SearchResultsState
+    data class Content(val apps: List<App>, val kind: SearchResultKind) : SearchResultsState
 }
 
 enum class SearchResultKind {

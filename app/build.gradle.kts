@@ -50,4 +50,5 @@ dependencies {
     implementation(project(":feature:showcase"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:appdetails"))
+    implementation(project(":feature:search"))
 }

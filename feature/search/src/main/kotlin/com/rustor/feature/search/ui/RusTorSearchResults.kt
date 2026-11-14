@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.rustor.core.model.App
+import com.rustor.core.model.AppId
 import com.rustor.core.ui.components.card.RusTorSearchAppCard
 import com.rustor.core.ui.theme.RusTorTheme
 
@@ -27,7 +28,7 @@ fun RusTorSearchResults(
     apps: List<App>,
     showingPopular: Boolean,
     noResults: Boolean,
-    onAppClick: (String) -> Unit,
+    onAppClick: (AppId) -> Unit,
     modifier: Modifier = Modifier,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -116,7 +117,7 @@ fun RusTorSearchResults(
                 category = app.category.title,
                 iconUrl = app.iconUrl,
                 coverUrl = app.iconUrl,
-                onClick = { onAppClick(app.id.value) },
+                onClick = { onAppClick(app.id) },
             )
         }
     }

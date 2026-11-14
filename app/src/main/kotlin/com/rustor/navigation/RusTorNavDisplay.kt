@@ -26,6 +26,7 @@ import com.rustor.core.model.CategoryId
 import com.rustor.core.ui.components.details.RusTorScreenshotViewer
 import com.rustor.feature.appdetails.AppDetailsRoute
 import com.rustor.feature.categories.CategoriesRoute
+import com.rustor.feature.search.SearchRoute
 import com.rustor.feature.showcase.ShowcaseRoute
 import com.rustor.feature.showcase.uiState.ShowcaseMode
 
@@ -145,7 +146,11 @@ private fun createEntryProvider(
     }
 
     entry<SearchKey> {
-        SearchPlaceholderScreen()
+        SearchRoute(
+            onAppClick = { appId ->
+                backStack.add(AppDetailsKey(appId.value))
+            },
+        )
     }
 
     entry<AppDetailsKey> { key ->
