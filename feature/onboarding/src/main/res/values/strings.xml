@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_brand" translatable="false">RuStore</string>
+    <string name="onboarding_title">Откройте для себя новые приложения</string>
+    <string name="onboarding_description">Листайте витрину, выбирайте категории и находите приложения, которые пригодятся каждый день.</string>
+    <string name="onboarding_continue">Перейти на витрину</string>
+    <string name="onboarding_saving">Сохраняем…</string>
+    <string name="onboarding_save_error">Не удалось сохранить настройки. Попробуйте ещё раз.</string>
+</resources>

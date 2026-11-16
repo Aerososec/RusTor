@@ -41,14 +41,19 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.hilt.lifecycle.viewmodel.compose)
 
     implementation(project(":core:common"))
     implementation(project(":core:database"))
+    implementation(project(":core:domain"))
     implementation(project(":core:ui"))
     implementation(project(":core:model"))
     implementation(project(":data:catalog"))
+    implementation(project(":data:preferences"))
     implementation(project(":feature:showcase"))
     implementation(project(":feature:categories"))
     implementation(project(":feature:appdetails"))
     implementation(project(":feature:search"))
+    implementation(project(":feature:onboarding"))
+
 }
