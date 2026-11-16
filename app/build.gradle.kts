@@ -43,6 +43,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.hilt.lifecycle.viewmodel.compose)
 
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+
     implementation(project(":core:common"))
     implementation(project(":core:database"))
     implementation(project(":core:domain"))
