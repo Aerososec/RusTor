@@ -68,4 +68,41 @@ class CatalogMapperTest {
         assertEquals(listOf("a.valid", "c.valid"), result.apps.map { it.id })
         assertEquals(listOf(0, 1), result.apps.map { it.feedPosition })
     }
+
+    @Test
+    fun `popular apps preserve order and exclude duplicate and unknown ids`() {
+        val dto = catalog(
+            appDto(packageName = "a.valid"),
+            appDto(packageName = "b.rejected", name = " "),
+            appDto(packageName = "c.valid"),
+            appDto(packageName = "d.unlisted"),
+        ).copy(
+            popularAppIds = listOf(
+                "c.valid",
+                "missing.app",
+                "c.valid",
+                "b.rejected",
+                "a.valid",
+                "a.valid",
+            ),
+        )
+
+        val result = dto.toEntities()
+
+        assertEquals(listOf("c.valid", "a.valid"), result.popularApps.map { it.appId })
+        assertEquals(listOf(0, 1), result.popularApps.map { it.position })
+    }
+
+    @Test
+    fun `empty popular selection stays empty when catalog contains apps`() {
+        val dto = catalog(
+            appDto(packageName = "a.valid"),
+            appDto(packageName = "b.valid"),
+        )
+
+        val result = dto.toEntities()
+
+        assertEquals(listOf("a.valid", "b.valid"), result.apps.map { it.id })
+        assertEquals(emptyList<String>(), result.popularApps.map { it.appId })
+    }
 }

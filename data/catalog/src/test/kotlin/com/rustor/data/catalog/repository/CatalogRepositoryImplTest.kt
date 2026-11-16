@@ -88,17 +88,23 @@ class CatalogRepositoryImplTest {
     }
 
     @Test
-    fun `source io error becomes no internet and keeps old catalog`() = runTest {
-        remote.catalog = catalogOf("a", "b")
+    fun `source io error becomes no internet and keeps old catalog and popular apps`() = runTest {
+        val popularIds = listOf("c", "a")
+        remote.catalog = catalogOf("a", "b", "c").copy(popularAppIds = popularIds)
         repository.refresh(reshuffle = true)
-        val before = repository.observeFeed().first()
+
+        val feedBefore = repository.observeFeed().first()
+        val popularBefore = repository.observePopularApps().first()
+        assertEquals(popularIds, popularBefore.map { it.id.value })
 
         remote.error = IOException("offline")
 
         assertFailsWith<AppException.NoInternet> {
             repository.refresh(reshuffle = false)
         }
-        assertEquals(before, repository.observeFeed().first())
+
+        assertEquals(feedBefore, repository.observeFeed().first())
+        assertEquals(popularBefore, repository.observePopularApps().first())
     }
 
     @Test
@@ -119,6 +125,16 @@ class CatalogRepositoryImplTest {
         assertEquals(1, source.maxActive)
     }
 
+    @Test
+    fun `refresh stores popular apps from dto in their original order`() = runTest {
+        val popularIds = listOf("c", "a")
+        remote.catalog = catalogOf("a", "b", "c").copy(popularAppIds = popularIds)
+
+        repository.refresh(reshuffle = true)
+
+        assertEquals(popularIds, dao.observePopularApps().first().map { it.app.id })
+        assertEquals(popularIds, repository.observePopularApps().first().map { it.id.value })
+    }
     private fun catalogOf(vararg ids: String): CatalogDto =
         catalog(*ids.map { appDto(packageName = it) }.toTypedArray())
 

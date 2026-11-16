@@ -8,6 +8,7 @@ import com.rustor.core.database.RusTorDatabase
 import com.rustor.core.database.entity.AppEntity
 import com.rustor.core.database.entity.AppWithCategory
 import com.rustor.core.database.entity.CategoryEntity
+import com.rustor.core.database.entity.PopularAppEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -248,6 +249,58 @@ class CatalogDaoTest {
 
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `popular query returns only selected apps in popularity order`() = runTest {
+        dao.replaceCatalog(
+            categories = listOf(category("tools")),
+            apps = listOf(
+                app("a.one", feedPosition = 0),
+                app("b.two", feedPosition = 1),
+                app("c.three", feedPosition = 2),
+            ),
+            popularApps = listOf(
+                PopularAppEntity(appId = "a.one", position = 1),
+                PopularAppEntity(appId = "c.three", position = 0),
+            ),
+        )
+
+        val popularIds = dao.observePopularApps().first().map { it.app.id }
+
+        assertEquals(listOf("c.three", "a.one"), popularIds)
+    }
+
+    @Test
+    fun `replacing catalog replaces and clears its popular selection`() = runTest {
+        val categories = listOf(category("tools"))
+        val apps = listOf(
+            app("a.one", feedPosition = 0),
+            app("b.two", feedPosition = 1),
+        )
+
+        dao.replaceCatalog(
+            categories = categories,
+            apps = apps,
+            popularApps = listOf(PopularAppEntity(appId = "a.one", position = 0)),
+        )
+        assertEquals(listOf("a.one"), dao.observePopularApps().first().map { it.app.id })
+
+        dao.replaceCatalog(
+            categories = categories,
+            apps = apps,
+            popularApps = listOf(PopularAppEntity(appId = "b.two", position = 0)),
+        )
+        assertEquals(listOf("b.two"), dao.observePopularApps().first().map { it.app.id })
+
+        dao.replaceCatalog(
+            categories = categories,
+            apps = apps,
+            popularApps = emptyList(),
+        )
+
+        assertEquals(emptyList<AppWithCategory>(), dao.observePopularApps().first())
+        assertEquals(listOf("a.one", "b.two"), dao.observeFeed().first().map { it.app.id })
     }
 
     private fun category(id: String, title: String = id) = CategoryEntity(id = id, title = title)

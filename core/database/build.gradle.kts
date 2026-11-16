@@ -10,9 +10,16 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
 dependencies{
     testImplementation(libs.bundles.testing.unit)
     testImplementation(libs.bundles.testing.robolectric)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.room.testing)
 }
