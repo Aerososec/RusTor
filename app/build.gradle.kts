@@ -46,6 +46,11 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)
 
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.core.ktx)
+
+    debugImplementation(libs.androidx.datastore.preferences)
+
     implementation(project(":core:common"))
     implementation(project(":core:database"))
     implementation(project(":core:domain"))

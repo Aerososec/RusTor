@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -141,7 +142,7 @@ fun ShowcaseScreen(
             when (header) {
                 is ShowcaseHeader.Main -> RusTorMainTopBar(
                     title = "Витрина",
-                    subtitle = "Открой что-то новое",
+                    subtitle = stringResource(R.string.showcase_subtitle),
                     logo = rememberVectorPainter(Icons.Filled.Star),
                     onSearchClick = onSearchClick,
                 )
