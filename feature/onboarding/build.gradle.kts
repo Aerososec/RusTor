@@ -5,3 +5,8 @@ plugins {
 android {
     namespace = "com.rustor.feature.onboarding"
 }
+
+dependencies{
+    implementation(project(":core:common"))
+    implementation(project(":core:domain"))
+}

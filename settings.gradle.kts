@@ -41,3 +41,4 @@ include(":feature:search")
 
 //data
 include(":data:catalog")
+include(":data:preferences")
