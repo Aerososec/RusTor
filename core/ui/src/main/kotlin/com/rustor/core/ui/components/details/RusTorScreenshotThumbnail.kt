@@ -23,6 +23,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
@@ -69,9 +71,15 @@ internal fun RusTorScreenshotThumbnail(
         Modifier.size(width = PortraitWidth, height = PortraitHeight)
     }
 
+    val screenshotDescription = contentDescription
+
     Card(
         onClick = onClick,
-        modifier = modifier.then(frameModifier),
+        modifier = modifier
+            .then(frameModifier)
+            .semantics {
+                this.contentDescription = screenshotDescription
+            },
         shape = RoundedCornerShape(RusTorTheme.radius.lg),
         colors = CardDefaults.cardColors(
             containerColor = RusTorTheme.colors.surfaceContainerHigh,
@@ -99,7 +107,7 @@ internal fun RusTorScreenshotThumbnail(
 
                     Image(
                         painter = imageState.painter,
-                        contentDescription = contentDescription,
+                        contentDescription = null,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.fillMaxSize(),
                     )

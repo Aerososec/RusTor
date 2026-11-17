@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -43,6 +44,8 @@ import com.rustor.feature.appdetails.ui.AppDetailsIntent
 import com.rustor.feature.appdetails.ui.AppDetailsSideEffect
 import com.rustor.feature.appdetails.ui.AppDetailsUiState
 import com.rustor.feature.appdetails.viewModel.AppDetailsViewModel
+
+const val APP_DETAILS_CONTENT_TAG = "app_details_content"
 
 @Composable
 fun AppDetailsRoute(
@@ -186,7 +189,7 @@ private fun AppDetailsContent(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.testTag(APP_DETAILS_CONTENT_TAG),
         contentPadding = PaddingValues(
             vertical = RusTorTheme.spacing.lg,
         ),

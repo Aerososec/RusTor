@@ -19,6 +19,7 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -31,6 +32,8 @@ import com.rustor.core.ui.components.chip.RusTorCategoryTag
 import com.rustor.core.ui.components.icon.RusTorAppIcon
 import com.rustor.core.ui.components.icon.RusTorAppIconSize
 import com.rustor.core.ui.theme.RusTorTheme
+
+const val SCREENSHOT_STRIP_TAG = "screenshot_strip"
 
 @Composable
 fun RusTorAppDetailsHeader(
@@ -162,6 +165,7 @@ fun RusTorScreenshotStrip(
                     RusTorTheme.spacing.md,
                 ),
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.testTag(SCREENSHOT_STRIP_TAG),
             ) {
                 itemsIndexed(screenshotUrls) { index, url ->
                     RusTorScreenshotThumbnail(
