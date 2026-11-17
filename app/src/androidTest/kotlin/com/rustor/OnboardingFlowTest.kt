@@ -21,6 +21,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import com.rustor.feature.onboarding.R as OnboardingR
 import com.rustor.feature.showcase.R as ShowcaseR
+import androidx.lifecycle.Lifecycle
+import androidx.test.espresso.Espresso.pressBackUnconditionally
 
 @RunWith(AndroidJUnit4::class)
 class OnboardingFlowTest {
@@ -66,6 +68,38 @@ class OnboardingFlowTest {
                 .performClick()
 
             assertShowcaseDisplayed()
+        }
+
+        ActivityScenario.launch(MainActivity::class.java).use {
+            assertShowcaseDisplayed()
+        }
+    }
+
+    @Test
+    fun completedOnboarding_backFromShowcase_leavesActivityAndNextLaunchShowsShowcase() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            waitForText(onboardingTitle)
+
+            composeRule
+                .onNodeWithText(onboardingTitle)
+                .assertIsDisplayed()
+
+            composeRule
+                .onNodeWithText(continueButton)
+                .performScrollTo()
+                .assertIsDisplayed()
+                .performClick()
+
+            assertShowcaseDisplayed()
+
+            pressBackUnconditionally()
+
+            composeRule.waitUntil(timeoutMillis = UI_TIMEOUT_MILLIS) {
+                val state = scenario.state
+
+                state == Lifecycle.State.CREATED ||
+                        state == Lifecycle.State.DESTROYED
+            }
         }
 
         ActivityScenario.launch(MainActivity::class.java).use {
