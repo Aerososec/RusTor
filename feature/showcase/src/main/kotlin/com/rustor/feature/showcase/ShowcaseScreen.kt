@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -59,6 +60,8 @@ import com.rustor.feature.showcase.uiState.ShowcaseMode
 import com.rustor.feature.showcase.uiState.ShowcaseSideEffect
 import com.rustor.feature.showcase.uiState.ShowcaseUiState
 import com.rustor.feature.showcase.viewModel.ShowcaseViewModel
+
+const val SHOWCASE_FEED_TAG = "showcase_feed"
 
 @Composable
 fun ShowcaseRoute(
@@ -221,7 +224,7 @@ private fun ShowcaseFeed(
             VerticalPager(
                 state = pagerState,
                 key = { page -> feed.apps[page].id.value },
-                modifier = modifier,
+                modifier = modifier.testTag(SHOWCASE_FEED_TAG),
             ) { page ->
                 val app = feed.apps[page]
 

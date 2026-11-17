@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -40,6 +41,8 @@ import com.rustor.feature.categories.ui.CategoriesIntent
 import com.rustor.feature.categories.ui.CategoriesUiState
 import com.rustor.feature.categories.ui.CategorySideEffect
 import com.rustor.feature.categories.viewModel.CategoriesViewModel
+
+const val CATEGORIES_LIST_TAG = "categories_list"
 
 @Composable
 fun CategoriesRoute(
@@ -181,7 +184,7 @@ private fun CategoriesList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier,
+        modifier = modifier.testTag(CATEGORIES_LIST_TAG),
         contentPadding = PaddingValues(RusTorTheme.spacing.lg),
         verticalArrangement = Arrangement.spacedBy(
             RusTorTheme.spacing.md,
