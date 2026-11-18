@@ -2,11 +2,13 @@
 <resources>
     <string name="app_details_title">О приложении</string>
     <string name="app_details_loading">Загружаем приложение…</string>
-
     <string name="app_details_not_found_title">Приложение не найдено</string>
     <string name="app_details_not_found_description">Возможно, приложение больше недоступно в каталоге. Попробуйте обновить данные.</string>
-
     <string name="app_details_error_title">Не удалось загрузить приложение</string>
     <string name="app_details_refresh">Обновить</string>
     <string name="app_details_retry">Повторить</string>
+    <string name="app_details_error_no_connection">Проверь подключение к интернету.</string>
+    <string name="app_details_error_service_unavailable">Сервис временно недоступен.</string>
+    <string name="app_details_error_unknown">Попробуй ещё раз.</string>
+    <string name="app_details_refresh_error_message">Не удалось обновить приложение. %1$s</string>
 </resources>

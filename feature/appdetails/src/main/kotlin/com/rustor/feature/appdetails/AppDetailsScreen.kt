@@ -1,5 +1,6 @@
 package com.rustor.feature.appdetails
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -19,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -65,14 +67,19 @@ fun AppDetailsRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState) {
+    val resources = LocalResources.current
+
+    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState, resources) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
                     is AppDetailsSideEffect.ShowSnackbarError -> {
+                        val description = resources.getString(effect.error.messageResId())
                         snackbarHostState.showSnackbar(
-                            message = "Не удалось обновить приложение. " +
-                                effect.error.userMessage(),
+                            message = resources.getString(
+                                R.string.app_details_refresh_error_message,
+                                description,
+                            ),
                         )
                     }
                 }
@@ -165,7 +172,7 @@ private fun AppDetailsBody(
         is AppDetailsUiState.Error -> {
             RusTorErrorState(
                 title = stringResource(R.string.app_details_error_title),
-                description = uiState.error.userMessage(),
+                description = stringResource(uiState.error.messageResId()),
                 actionText = stringResource(R.string.app_details_retry),
                 onRetry = onRefresh,
                 modifier = modifier,
@@ -254,8 +261,9 @@ private fun AgeRating.toUiAgeRating(): RusTorAgeRating = when (this) {
     AgeRating.EIGHTEEN_PLUS -> RusTorAgeRating.AGE_18
 }
 
-private fun UiError.userMessage(): String = when (this) {
-    UiError.NoConnection -> "Проверь подключение к интернету."
-    UiError.ServiceUnavailable -> "Сервис временно недоступен."
-    UiError.Unknown -> "Попробуй ещё раз."
+@StringRes
+private fun UiError.messageResId(): Int = when (this) {
+    UiError.NoConnection -> R.string.app_details_error_no_connection
+    UiError.ServiceUnavailable -> R.string.app_details_error_service_unavailable
+    UiError.Unknown -> R.string.app_details_error_unknown
 }
