@@ -1,6 +1,5 @@
 package com.rustor.feature.categories
 
-import android.annotation.SuppressLint
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -47,7 +46,6 @@ import com.rustor.feature.categories.viewModel.CategoriesViewModel
 
 const val CATEGORIES_LIST_TAG = "categories_list"
 
-@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun CategoriesRoute(
     onCategoryClick: (CategoryId) -> Unit,
@@ -60,17 +58,18 @@ fun CategoriesRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val lifecycleOwner = LocalLifecycleOwner.current
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
-    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState, context) {
+    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState, resources) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
                     is CategorySideEffect.ShowSnackbarError -> {
+                        val description = resources.getString(effect.error.messageResId())
                         snackbarHostState.showSnackbar(
-                            message = context.getString(
+                            message = resources.getString(
                                 R.string.categories_refresh_error_message,
-                                context.getString(effect.error.messageResId()),
+                                description,
                             ),
                         )
                     }

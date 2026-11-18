@@ -1,5 +1,6 @@
 package com.rustor.feature.search
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -45,15 +47,21 @@ fun SearchRoute(onAppClick: (AppId) -> Unit, modifier: Modifier = Modifier) {
     val snackbarHostState = remember { SnackbarHostState() }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState) {
+    val resources = LocalResources.current
+
+    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState, resources) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
-                    is SearchSideEffect.ShowSnackbarError ->
+                    is SearchSideEffect.ShowSnackbarError -> {
+                        val description = resources.getString(effect.error.messageResId())
                         snackbarHostState.showSnackbar(
-                            message = "Временные неполадки " +
-                                effect.error.userMessage(),
+                            message = resources.getString(
+                                R.string.rustor_search_refresh_error_message,
+                                description,
+                            ),
                         )
+                    }
                 }
             }
         }
@@ -69,7 +77,7 @@ fun SearchRoute(onAppClick: (AppId) -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SearchScreen(
+fun SearchScreen(
     uiState: SearchUiState,
     onIntent: (SearchIntent) -> Unit,
     snackbarHostState: SnackbarHostState,
@@ -157,7 +165,7 @@ private fun SearchResult(uiState: SearchUiState, onAppClick: (AppId) -> Unit, on
         is SearchResultsState.Error -> {
             RusTorErrorState(
                 title = stringResource(com.rustor.core.ui.R.string.rustor_error_title),
-                description = uiState.results.error.userMessage(),
+                description = stringResource(uiState.results.error.messageResId()),
                 onRetry = onRetry,
                 modifier = modifier,
             )
@@ -172,8 +180,9 @@ private fun SearchResult(uiState: SearchUiState, onAppClick: (AppId) -> Unit, on
     }
 }
 
-private fun UiError.userMessage(): String = when (this) {
-    UiError.NoConnection -> "Проверь подключение к интернету."
-    UiError.ServiceUnavailable -> "Сервис временно недоступен."
-    UiError.Unknown -> "Попробуй ещё раз."
+@StringRes
+private fun UiError.messageResId(): Int = when (this) {
+    UiError.NoConnection -> R.string.rustor_search_error_no_connection
+    UiError.ServiceUnavailable -> R.string.rustor_search_error_service_unavailable
+    UiError.Unknown -> R.string.rustor_search_error_unknown
 }

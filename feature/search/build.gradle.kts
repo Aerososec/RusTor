@@ -4,6 +4,14 @@ plugins {
 
 android {
     namespace = "com.rustor.feature.search"
+
+    android {
+        namespace = "com.rustor.feature.search"
+
+        defaultConfig {
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+    }
 }
 
 dependencies {
