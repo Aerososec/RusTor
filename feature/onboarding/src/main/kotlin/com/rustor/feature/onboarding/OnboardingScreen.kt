@@ -58,7 +58,7 @@ fun OnboardingRoute(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun OnboardingScreen(
+internal  fun OnboardingScreen(
     uiState: OnboardingUiState,
     onIntent: (OnboardingIntent) -> Unit,
     modifier: Modifier = Modifier,
