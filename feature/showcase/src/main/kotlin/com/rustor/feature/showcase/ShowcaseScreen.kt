@@ -62,6 +62,7 @@ import com.rustor.feature.showcase.uiState.ShowcaseUiState
 import com.rustor.feature.showcase.viewModel.ShowcaseViewModel
 
 const val SHOWCASE_FEED_TAG = "showcase_feed"
+const val SHOWCASE_REFRESH_AREA_TAG = "showcase_refresh_area"
 
 @Composable
 fun ShowcaseRoute(
@@ -164,7 +165,8 @@ fun ShowcaseScreen(
             onRefresh = refresh,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .testTag(SHOWCASE_REFRESH_AREA_TAG),
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 if (
@@ -271,7 +273,7 @@ private fun ShowcaseFeed(
                 FeedState.Loading -> ShowcaseFeedSkeleton()
 
                 FeedState.EmptyCatalog -> RusTorEmptyState(
-                    title = "Каталог пока пуст",
+                    title = stringResource(R.string.showcase_empty_title),
                     description = "Попробуй обновить витрину.",
                     actionText = "Обновить",
                     onAction = onRefresh,
@@ -283,7 +285,7 @@ private fun ShowcaseFeed(
                 )
 
                 is FeedState.Error -> RusTorErrorState(
-                    title = "Не удалось загрузить витрину",
+                    title = stringResource(R.string.showcase_error_title),
                     description = feed.error.userMessage(),
                     onRetry = onRefresh,
                 )
