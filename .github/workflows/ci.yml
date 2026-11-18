@@ -79,20 +79,20 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Run database instrumented tests
+      - name: Run Android instrumented tests
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
           api-level: '37.0'
           system-image-api-level: 35
           target: google_apis
           arch: x86_64
-          script: ./gradlew :core:database:connectedDebugAndroidTest
+          script: ./gradlew connectedDebugAndroidTest
 
       - name: Upload Android test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: database-android-test-reports
-          path: core/database/build/reports/androidTests/connected/
+          name: android-test-reports
+          +          path: '**/build/reports/androidTests/connected/'
           if-no-files-found: ignore
           retention-days: 7
