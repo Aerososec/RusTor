@@ -1,4 +1,4 @@
-package com.rustor
+package com.rustor.feature.showcase
 
 import android.content.Context
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,9 +19,6 @@ import com.rustor.core.model.AppId
 import com.rustor.core.model.Category
 import com.rustor.core.model.CategoryId
 import com.rustor.core.ui.theme.RusTorTheme
-import com.rustor.feature.showcase.SHOWCASE_FEED_TAG
-import com.rustor.feature.showcase.SHOWCASE_REFRESH_AREA_TAG
-import com.rustor.feature.showcase.ShowcaseScreen
 import com.rustor.feature.showcase.uiState.FeedState
 import com.rustor.feature.showcase.uiState.ShowcaseHeader
 import com.rustor.feature.showcase.uiState.ShowcaseIntent
@@ -32,6 +29,16 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.rustor.feature.showcase.R as ShowcaseR
+import androidx.compose.ui.test.performClick
+import com.rustor.core.ui.R as CoreUiR
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.performScrollToIndex
 
 @RunWith(AndroidJUnit4::class)
 class ShowcasePullToRefreshTest {
@@ -113,30 +120,139 @@ class ShowcasePullToRefreshTest {
         swipeDownAndAssertRefresh()
     }
 
-    private fun showScreen(feed: FeedState) {
-        val pageCount = (feed as? FeedState.Content)?.apps?.size ?: 0
+    @Test
+    fun emptyCategory_swipeDown_sendsRefreshIntent() {
+        showScreen(
+            feed = FeedState.EmptyCategory,
+            selectedCategory = category.id,
+        )
+
+        val emptyCategoryTitle = context.getString(
+            ShowcaseR.string.showcase_empty_category_title,
+        )
+
+        composeRule
+            .onNodeWithText(emptyCategoryTitle)
+            .assertIsDisplayed()
+
+        swipeDownAndAssertRefresh()
+    }
+
+    @Test
+    fun error_retryClick_sendsRefreshIntent() {
+        showScreen(FeedState.Error(UiError.NoConnection))
+
+        val errorTitle = context.getString(ShowcaseR.string.showcase_error_title)
+        val retryLabel = context.getString(CoreUiR.string.rustor_action_retry)
+
+        composeRule
+            .onNodeWithText(errorTitle)
+            .assertIsDisplayed()
+
+        composeRule.runOnIdle {
+            assertTrue(receivedIntents.isEmpty())
+        }
+
+        composeRule
+            .onNodeWithText(retryLabel)
+            .assertIsDisplayed()
+            .performClick()
+
+        composeRule.runOnIdle {
+            assertEquals(
+                listOf(ShowcaseIntent.Refresh),
+                receivedIntents.toList(),
+            )
+        }
+    }
+
+    @Test
+    fun emptyCatalog_refreshClick_sendsRefreshIntent() {
+        showScreen(FeedState.EmptyCatalog)
+
+        val emptyTitle = context.getString(ShowcaseR.string.showcase_empty_title)
+        val refreshLabel = context.getString(ShowcaseR.string.showcase_action_refresh)
+
+        composeRule
+            .onNodeWithText(emptyTitle)
+            .assertIsDisplayed()
+
+        composeRule.runOnIdle {
+            assertTrue(receivedIntents.isEmpty())
+        }
+
+        composeRule
+            .onNodeWithText(refreshLabel)
+            .assertIsDisplayed()
+            .performClick()
+
+        composeRule.runOnIdle {
+            assertEquals(listOf(ShowcaseIntent.Refresh), receivedIntents.toList())
+        }
+    }
+
+    @Test
+    fun content_refreshing_showsIndicatorAndKeepsCurrentCard() {
+        val content = FeedState.Content(
+            apps = listOf(firstApp, secondApp),
+            isRefreshing = false,
+        )
+        val feedState = showScreen(content)
+
+        composeRule
+            .onNodeWithTag(SHOWCASE_FEED_TAG)
+            .performScrollToIndex(1)
+
+        val currentCard = composeRule.onNodeWithText(secondApp.name)
+        val refreshIndicator = composeRule.onNode(
+            SemanticsMatcher.expectValue(
+                SemanticsProperties.ProgressBarRangeInfo,
+                ProgressBarRangeInfo.Indeterminate,
+            ) and hasAnyAncestor(hasTestTag(SHOWCASE_REFRESH_AREA_TAG)),
+        )
+
+        currentCard.assertIsDisplayed()
+        refreshIndicator.assertDoesNotExist()
+
+        composeRule.runOnIdle {
+            feedState.value = content.copy(isRefreshing = true)
+        }
+
+        refreshIndicator.assertIsDisplayed()
+        currentCard.assertIsDisplayed()
+
+        composeRule.runOnIdle {
+            feedState.value = content.copy(isRefreshing = false)
+        }
+
+        refreshIndicator.assertDoesNotExist()
+        currentCard.assertIsDisplayed()
+    }
+
+
+    private fun showScreen(
+        feed: FeedState,
+        selectedCategory: CategoryId? = null,
+    ): MutableState<FeedState> {
+        val feedState = mutableStateOf(feed)
 
         composeRule.setContent {
             RusTorTheme {
-                val pagerState = rememberPagerState(
-                    initialPage = 0,
-                    pageCount = { pageCount },
-                )
-                val snackbarHostState = remember {
-                    SnackbarHostState()
+                val currentFeed = feedState.value
+                val pagerState = rememberPagerState(initialPage = 0) {
+                    (currentFeed as? FeedState.Content)?.apps?.size ?: 0
                 }
+                val snackbarHostState = remember { SnackbarHostState() }
 
                 ShowcaseScreen(
                     uiState = ShowcaseUiState(
                         header = ShowcaseHeader.Main(
                             categories = listOf(category),
-                            selectedCategory = null,
+                            selectedCategory = selectedCategory,
                         ),
-                        feed = feed,
+                        feed = currentFeed,
                     ),
-                    onIntent = { intent ->
-                        receivedIntents += intent
-                    },
+                    onIntent = { intent -> receivedIntents += intent },
                     onAppClick = {},
                     onSearchClick = {},
                     onAllCategoriesClick = {},
@@ -146,6 +262,8 @@ class ShowcasePullToRefreshTest {
                 )
             }
         }
+
+        return feedState
     }
 
     private fun swipeDownAndAssertRefresh() {

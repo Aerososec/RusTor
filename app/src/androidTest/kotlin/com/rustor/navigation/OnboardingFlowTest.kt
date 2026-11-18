@@ -1,4 +1,4 @@
-package com.rustor
+package com.rustor.navigation
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
@@ -23,6 +23,7 @@ import com.rustor.feature.onboarding.R as OnboardingR
 import com.rustor.feature.showcase.R as ShowcaseR
 import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso.pressBackUnconditionally
+import com.rustor.MainActivity
 
 @RunWith(AndroidJUnit4::class)
 class OnboardingFlowTest {

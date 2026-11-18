@@ -4,6 +4,10 @@ plugins {
 
 android {
     namespace = "com.rustor.feature.showcase"
+
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
 
 dependencies{

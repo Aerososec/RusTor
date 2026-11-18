@@ -275,12 +275,12 @@ private fun ShowcaseFeed(
                 FeedState.EmptyCatalog -> RusTorEmptyState(
                     title = stringResource(R.string.showcase_empty_title),
                     description = "Попробуй обновить витрину.",
-                    actionText = "Обновить",
+                    actionText = stringResource(R.string.showcase_action_refresh),
                     onAction = onRefresh,
                 )
 
                 FeedState.EmptyCategory -> RusTorEmptyState(
-                    title = "В этой категории пока нет приложений",
+                    title = stringResource(R.string.showcase_empty_category_title),
                     description = "Обнови витрину или вернись к другим категориям.",
                 )
 

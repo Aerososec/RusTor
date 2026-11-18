@@ -1,4 +1,4 @@
-package com.rustor
+package com.rustor.navigation
 
 import android.content.Context
 import androidx.compose.ui.test.SemanticsMatcher
@@ -23,6 +23,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.rustor.MainActivity
 import com.rustor.core.model.App
 import com.rustor.core.ui.components.details.SCREENSHOT_STRIP_TAG
 import com.rustor.feature.appdetails.APP_DETAILS_CONTENT_TAG

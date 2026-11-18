@@ -1,4 +1,4 @@
-package com.rustor
+package com.rustor.navigation
 
 import android.content.Context
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -22,6 +22,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.rustor.MainActivity
 import com.rustor.core.model.App
 import com.rustor.navigation.RusTorTab
 import com.rustor.testing.CatalogTestEntryPoint

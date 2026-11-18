@@ -3,4 +3,6 @@
     <string name="showcase_subtitle">Открой что-то новое</string>
     <string name="showcase_empty_title">Каталог пока пуст</string>
     <string name="showcase_error_title">Не удалось загрузить витрину</string>
+    <string name="showcase_empty_category_title">В этой категории пока нет приложений</string>
+    <string name="showcase_action_refresh">Обновить</string>
 </resources>
