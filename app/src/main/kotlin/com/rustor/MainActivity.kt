@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,48 +33,50 @@ class MainActivity : ComponentActivity() {
                 val viewModel = hiltViewModel<AppViewModel>()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-                when (uiState) {
-                    AppUiState.Error -> {
-                        Surface(
-                            modifier = Modifier.fillMaxSize(),
-                            color = RusTorTheme.colors.background,
-                        ) {
-                            RusTorErrorState(
-                                title = stringResource(R.string.startup_error_title),
-                                description = stringResource(
-                                    R.string.startup_error_description,
-                                ),
-                                onRetry = viewModel::retry,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .safeDrawingPadding(),
-                            )
-                        }
-                    }
-
-                    AppUiState.Loading -> {
-                        Surface(
-                            modifier = Modifier.fillMaxSize(),
-                            color = RusTorTheme.colors.background,
-                        ) {
-                            RusTorLoadingState(
-                                text = stringResource(R.string.startup_loading),
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .safeDrawingPadding(),
-                            )
-                        }
-                    }
-
-                    AppUiState.Main -> {
-                        RusTorNavDisplay()
-                    }
-
-                    AppUiState.Onboarding -> {
-                        OnboardingRoute()
-                    }
-                }
+                AppContent(
+                    uiState = uiState,
+                    onRetry = viewModel::retry,
+                )
             }
         }
+    }
+}
+
+@Composable
+internal fun AppContent(uiState: AppUiState, onRetry: () -> Unit) {
+    when (uiState) {
+        AppUiState.Error -> {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = RusTorTheme.colors.background,
+            ) {
+                RusTorErrorState(
+                    title = stringResource(R.string.startup_error_title),
+                    description = stringResource(R.string.startup_error_description),
+                    onRetry = onRetry,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .safeDrawingPadding(),
+                )
+            }
+        }
+
+        AppUiState.Loading -> {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = RusTorTheme.colors.background,
+            ) {
+                RusTorLoadingState(
+                    text = stringResource(R.string.startup_loading),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .safeDrawingPadding(),
+                )
+            }
+        }
+
+        AppUiState.Main -> RusTorNavDisplay()
+
+        AppUiState.Onboarding -> OnboardingRoute()
     }
 }
