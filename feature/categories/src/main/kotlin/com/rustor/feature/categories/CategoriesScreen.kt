@@ -1,5 +1,7 @@
 package com.rustor.feature.categories
 
+import android.annotation.SuppressLint
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -21,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -44,6 +47,7 @@ import com.rustor.feature.categories.viewModel.CategoriesViewModel
 
 const val CATEGORIES_LIST_TAG = "categories_list"
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun CategoriesRoute(
     onCategoryClick: (CategoryId) -> Unit,
@@ -56,15 +60,18 @@ fun CategoriesRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
-    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState) {
+    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState, context) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
                     is CategorySideEffect.ShowSnackbarError -> {
                         snackbarHostState.showSnackbar(
-                            message = "Не удалось обновить категории. " +
-                                effect.error.userMessage(),
+                            message = context.getString(
+                                R.string.categories_refresh_error_message,
+                                context.getString(effect.error.messageResId()),
+                            ),
                         )
                     }
                 }
@@ -160,7 +167,7 @@ private fun CategoriesContent(
         is CategoriesUiState.Error -> {
             RusTorErrorState(
                 title = stringResource(R.string.categories_error_title),
-                description = uiState.e.userMessage(),
+                description = stringResource(uiState.e.messageResId()),
                 actionText = stringResource(R.string.categories_retry),
                 onRetry = onRefresh,
                 modifier = modifier,
@@ -206,8 +213,9 @@ private fun CategoriesList(
     }
 }
 
-private fun UiError.userMessage(): String = when (this) {
-    UiError.NoConnection -> "Проверь подключение к интернету."
-    UiError.ServiceUnavailable -> "Сервис временно недоступен."
-    UiError.Unknown -> "Попробуй ещё раз."
+@StringRes
+private fun UiError.messageResId(): Int = when (this) {
+    UiError.NoConnection -> R.string.categories_error_no_connection
+    UiError.ServiceUnavailable -> R.string.categories_error_service_unavailable
+    UiError.Unknown -> R.string.categories_error_unknown
 }
