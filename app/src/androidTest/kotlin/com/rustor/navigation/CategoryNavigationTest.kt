@@ -17,6 +17,7 @@ import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performScrollToNode
 import androidx.datastore.preferences.core.edit
@@ -209,6 +210,37 @@ class CategoryNavigationTest {
             composeRule
                 .onNode(feedMatcher)
                 .assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun allCategoriesClick_opensListAfterLeavingFilteredShowcase() {
+        ActivityScenario.launch(MainActivity::class.java).use {
+            waitForNode(feedMatcher)
+            composeRule.onNode(categoriesTabMatcher).performClick()
+
+            waitForNode(categoriesListMatcher)
+            val categoryCard = hasText(category.title) and hasClickAction()
+            composeRule.onNode(categoriesListMatcher).performScrollToNode(categoryCard)
+            composeRule.onNode(
+                categoryCard and hasAnyAncestor(hasTestTag(CATEGORIES_LIST_TAG)),
+            ).performClick()
+
+            waitForNode(feedMatcher)
+            assertFeedPageCount()
+
+            val showcaseTab = hasText(RusTorTab.SHOWCASE.label) and isSelectable()
+            composeRule.onNode(showcaseTab).performClick()
+
+            val allCategoriesChip = hasText("Все категории") and hasClickAction()
+            waitForNode(allCategoriesChip)
+            composeRule.onNode(allCategoriesChip)
+                .performScrollTo()
+                .performClick()
+
+            waitForNode(categoriesListMatcher)
+            composeRule.onNode(categoriesListMatcher).assertIsDisplayed()
+            composeRule.onNode(categoriesTabMatcher).assertIsSelected()
         }
     }
 

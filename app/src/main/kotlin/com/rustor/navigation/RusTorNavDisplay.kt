@@ -36,6 +36,7 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
         mutableStateOf(RusTorTab.SHOWCASE)
     }
 
+
     val showcaseBackStack = rememberNavBackStack(ShowcaseKey)
     val categoriesBackStack = rememberNavBackStack(CategoriesKey)
     val searchBackStack = rememberNavBackStack(SearchKey)
@@ -44,17 +45,27 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
         currentTab = tab
     }
 
+    val onOpenCategoriesRoot: () -> Unit = {
+        while (categoriesBackStack.size > 1) {
+            categoriesBackStack.removeAt(categoriesBackStack.lastIndex)
+        }
+        onTabSelected(RusTorTab.CATEGORIES)
+    }
+
     val showcaseEntries = rememberTabEntries(
         backStack = showcaseBackStack,
         onTabSelected = onTabSelected,
+        onOpenCategoriesRoot = onOpenCategoriesRoot,
     )
     val categoriesEntries = rememberTabEntries(
         backStack = categoriesBackStack,
         onTabSelected = onTabSelected,
+        onOpenCategoriesRoot = onOpenCategoriesRoot,
     )
     val searchEntries = rememberTabEntries(
         backStack = searchBackStack,
         onTabSelected = onTabSelected,
+        onOpenCategoriesRoot = onOpenCategoriesRoot,
     )
 
     val activeBackStack = when (currentTab) {
@@ -96,7 +107,8 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
 private fun createEntryProvider(
     backStack: MutableList<NavKey>,
     onTabSelected: (RusTorTab) -> Unit,
-): (NavKey) -> NavEntry<NavKey> = entryProvider<NavKey> {
+    onOpenCategoriesRoot: () -> Unit,
+): (NavKey) -> NavEntry<NavKey> = entryProvider {
     entry<ShowcaseKey> {
         ShowcaseRoute(
             mode = ShowcaseMode.Main,
@@ -106,9 +118,7 @@ private fun createEntryProvider(
             onSearchClick = {
                 onTabSelected(RusTorTab.SEARCH)
             },
-            onAllCategoriesClick = {
-                onTabSelected(RusTorTab.CATEGORIES)
-            },
+            onAllCategoriesClick = onOpenCategoriesRoot,
             onBackClick = {},
         )
     }
@@ -136,9 +146,7 @@ private fun createEntryProvider(
             onSearchClick = {
                 onTabSelected(RusTorTab.SEARCH)
             },
-            onAllCategoriesClick = {
-                onTabSelected(RusTorTab.CATEGORIES)
-            },
+            onAllCategoriesClick = onOpenCategoriesRoot,
             onBackClick = {
                 backStack.popBackStack()
             },
@@ -185,10 +193,12 @@ private fun createEntryProvider(
 private fun rememberTabEntries(
     backStack: MutableList<NavKey>,
     onTabSelected: (RusTorTab) -> Unit,
+    onOpenCategoriesRoot: () -> Unit,
 ): List<NavEntry<NavKey>> {
     val provider = createEntryProvider(
         backStack = backStack,
         onTabSelected = onTabSelected,
+        onOpenCategoriesRoot = onOpenCategoriesRoot,
     )
 
     return rememberDecoratedNavEntries(
