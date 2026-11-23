@@ -36,7 +36,6 @@ fun RusTorNavDisplay(modifier: Modifier = Modifier) {
         mutableStateOf(RusTorTab.SHOWCASE)
     }
 
-
     val showcaseBackStack = rememberNavBackStack(ShowcaseKey)
     val categoriesBackStack = rememberNavBackStack(CategoriesKey)
     val searchBackStack = rememberNavBackStack(SearchKey)
