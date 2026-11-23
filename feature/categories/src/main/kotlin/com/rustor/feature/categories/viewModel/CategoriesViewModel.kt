@@ -18,8 +18,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +34,7 @@ class CategoriesViewModel @Inject constructor(private val repository: CatalogRep
     private val categoriesSummary = repository.observeCategorySummaries()
 
     private val syncStatus = MutableStateFlow<SyncStatus>(SyncStatus.Idle)
+    private val readRetryVersion = MutableStateFlow(0L)
 
     val uiState: StateFlow<CategoriesUiState> = combine(
         categoriesSummary,
@@ -40,6 +44,15 @@ class CategoriesViewModel @Inject constructor(private val repository: CatalogRep
             categories = summary,
             syncStatus = status,
         )
+    }.retryWhen { cause, _ ->
+        if (cause !is AppException) return@retryWhen false
+
+        val failedAtVersion = readRetryVersion.value
+        emit(CategoriesUiState.Error(cause.toUiError()))
+
+        readRetryVersion.first { it != failedAtVersion }
+        emit(CategoriesUiState.Loading)
+        true
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -56,6 +69,8 @@ class CategoriesViewModel @Inject constructor(private val repository: CatalogRep
     }
 
     private fun refresh() {
+        readRetryVersion.update { it + 1 }
+
         if (syncJob?.isActive == true) return
 
         syncStatus.value = SyncStatus.Syncing

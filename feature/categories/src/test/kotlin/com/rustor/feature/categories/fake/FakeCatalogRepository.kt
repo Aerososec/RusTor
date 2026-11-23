@@ -11,6 +11,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 
 internal class FakeCatalogRepository : CatalogRepository {
 
@@ -23,7 +25,12 @@ internal class FakeCatalogRepository : CatalogRepository {
     var cancelledCalls = 0
         private set
 
-    override fun observeCategorySummaries(): Flow<List<CategorySummary>> = categorySummaries
+    var summariesReadError: AppException? = null
+
+    override fun observeCategorySummaries(): Flow<List<CategorySummary>> = flow {
+        summariesReadError?.let { throw it }
+        emitAll(categorySummaries)
+    }
 
     override suspend fun refresh(reshuffle: Boolean) {
         refreshCalls += reshuffle

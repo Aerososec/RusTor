@@ -29,10 +29,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,6 +54,7 @@ internal class ShowcaseViewModel @AssistedInject constructor(
             is ShowcaseMode.Category -> SyncStatus.Idle
         },
     )
+    private val readRetryVersion = MutableStateFlow(0L)
 
     private val categories = catalogRepository.observeCategories()
 
@@ -75,11 +79,11 @@ internal class ShowcaseViewModel @AssistedInject constructor(
         syncStatus,
         categories,
         feedResults,
-    ) { status, categories, result ->
+    ) { status, currentCategories, result ->
         ShowcaseUiState(
             header = computeHeader(
                 mode = mode,
-                categories = categories,
+                categories = currentCategories,
                 selectedCategory = result.categoryId,
             ),
             feed = computeFeedState(
@@ -89,17 +93,28 @@ internal class ShowcaseViewModel @AssistedInject constructor(
                 selectedCategory = result.categoryId,
             ),
         )
+    }.retryWhen { cause, _ ->
+        if (cause !is AppException) return@retryWhen false
+
+        val failedAtVersion = readRetryVersion.value
+        emit(stateWithoutCatalog(FeedState.Error(cause.toUiError())))
+
+        readRetryVersion.first { it != failedAtVersion }
+        emit(stateWithoutCatalog(FeedState.Loading))
+        true
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = ShowcaseUiState(
-            header = computeHeader(
-                mode = mode,
-                categories = emptyList(),
-                selectedCategory = selectedCategory.value?.let(::CategoryId),
-            ),
-            feed = FeedState.Loading,
+        initialValue = stateWithoutCatalog(FeedState.Loading),
+    )
+
+    private fun stateWithoutCatalog(feed: FeedState): ShowcaseUiState = ShowcaseUiState(
+        header = computeHeader(
+            mode = mode,
+            categories = emptyList(),
+            selectedCategory = selectedCategory.value?.let(::CategoryId),
         ),
+        feed = feed,
     )
 
     private val _effects = Channel<ShowcaseSideEffect>(Channel.BUFFERED)
@@ -126,6 +141,8 @@ internal class ShowcaseViewModel @AssistedInject constructor(
     }
 
     private fun refresh() {
+        readRetryVersion.update { it + 1 }
+
         if (syncStatus.value == SyncStatus.Syncing(SyncTrigger.User)) return
         syncJob?.cancel()
 

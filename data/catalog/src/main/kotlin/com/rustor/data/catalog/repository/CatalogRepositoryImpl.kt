@@ -16,11 +16,14 @@ import com.rustor.data.catalog.mappers.toDomain
 import com.rustor.data.catalog.mappers.toEntities
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 
 @Singleton
@@ -32,14 +35,28 @@ internal class CatalogRepositoryImpl @Inject constructor(
 
     private val mutex = Mutex()
 
-    override fun observeFeed(): Flow<List<App>> = catalogDao.observeFeed().map { list -> list.map { it.toDomain() } }
+    override fun observeFeed(): Flow<List<App>> = observeCatalogRead {
+        catalogDao.observeFeed().map { rows ->
+            rows.map { it.toDomain() }
+        }
+    }
 
-    override fun observeFeedByCategory(categoryId: CategoryId): Flow<List<App>> = catalogDao.observeFeedByCategory(
-        categoryId = categoryId.value,
-    ).map { list -> list.map { it.toDomain() } }
+    override fun observeFeedByCategory(categoryId: CategoryId): Flow<List<App>> = observeCatalogRead {
+        catalogDao.observeFeedByCategory(categoryId = categoryId.value).map { rows ->
+            rows.map { it.toDomain() }
+        }
+    }
 
-    override fun observeCategories(): Flow<List<Category>> = catalogDao.observeCategories().map { list ->
-        list.map { it.toDomain() }
+    override fun observeCategories(): Flow<List<Category>> = observeCatalogRead {
+        catalogDao.observeCategories().map { rows ->
+            rows.map { it.toDomain() }
+        }
+    }
+
+    override fun observeCategorySummaries(): Flow<List<CategorySummary>> = observeCatalogRead {
+        catalogDao.observeCategorySummaries().map { rows ->
+            rows.map { it.toDomain() }
+        }
     }
 
     override suspend fun refresh(reshuffle: Boolean) = mutex.withLock {
@@ -57,11 +74,6 @@ internal class CatalogRepositoryImpl @Inject constructor(
             )
         }
     }
-
-    override fun observeCategorySummaries(): Flow<List<CategorySummary>> =
-        catalogDao.observeCategorySummaries().map { rows ->
-            rows.map { it.toDomain() }
-        }
 
     override fun observeApp(appId: AppId): Flow<App?> = catalogDao.observeApp(appId.value)
         .map { app ->
@@ -84,4 +96,15 @@ internal class CatalogRepositoryImpl @Inject constructor(
                 else -> throw error
             }
         }
+
+    private fun <T> observeCatalogRead(source: () -> Flow<T>): Flow<T> = flow {
+        emitAll(source())
+    }.catch { cause ->
+        when (cause) {
+            is CancellationException -> throw cause
+            is AppException -> throw cause
+            is Exception -> throw AppException.Unknown(cause)
+            else -> throw cause
+        }
+    }
 }

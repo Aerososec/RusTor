@@ -324,6 +324,42 @@ class CategoriesViewModelTest {
         }
     }
 
+    @Test
+    fun `retry after read failure restores live category updates`() = runTest {
+        repository.summariesReadError = AppException.Unknown()
+        repository.categorySummaries.value = categories
+
+        withViewModel { viewModel, _ ->
+            assertEquals(
+                CategoriesUiState.Error(UiError.Unknown),
+                viewModel.uiState.value,
+            )
+
+            // Первая повторная попытка тоже завершается ошибкой.
+            viewModel.onIntent(CategoriesIntent.Refresh)
+            runCurrent()
+            assertEquals(
+                CategoriesUiState.Error(UiError.Unknown),
+                viewModel.uiState.value,
+            )
+
+            repository.summariesReadError = null
+            viewModel.onIntent(CategoriesIntent.Refresh)
+            runCurrent()
+            assertEquals(
+                CategoriesUiState.Content(categories, isRefreshing = false),
+                viewModel.uiState.value,
+            )
+
+            repository.categorySummaries.value = listOf(games)
+            runCurrent()
+            assertEquals(
+                CategoriesUiState.Content(listOf(games), isRefreshing = false),
+                viewModel.uiState.value,
+            )
+        }
+    }
+
     private suspend fun TestScope.withViewModel(
         check: suspend (CategoriesViewModel, List<CategorySideEffect>) -> Unit,
     ) {
