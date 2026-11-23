@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,8 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -60,6 +59,7 @@ import com.rustor.feature.showcase.uiState.ShowcaseMode
 import com.rustor.feature.showcase.uiState.ShowcaseSideEffect
 import com.rustor.feature.showcase.uiState.ShowcaseUiState
 import com.rustor.feature.showcase.viewModel.ShowcaseViewModel
+import com.rustor.core.ui.R as CoreUiR
 
 const val SHOWCASE_FEED_TAG = "showcase_feed"
 const val SHOWCASE_REFRESH_AREA_TAG = "showcase_refresh_area"
@@ -147,7 +147,7 @@ fun ShowcaseScreen(
                 is ShowcaseHeader.Main -> RusTorMainTopBar(
                     title = "Витрина",
                     subtitle = stringResource(R.string.showcase_subtitle),
-                    logo = rememberVectorPainter(Icons.Filled.Star),
+                    logo = painterResource(CoreUiR.drawable.ic_rustore_logo),
                     onSearchClick = onSearchClick,
                 )
 

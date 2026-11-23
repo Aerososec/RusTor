@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.feature.onboarding.animation.RuStoreAnimatedLogo
 import com.rustor.feature.onboarding.ui.OnboardingIntent
 import com.rustor.feature.onboarding.ui.OnboardingUiState
 import com.rustor.feature.onboarding.viewModel.OnboardingViewModel
@@ -83,11 +84,9 @@ internal fun OnboardingScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    text = stringResource(R.string.onboarding_brand),
-                    style = RusTorTheme.typography.displayMedium,
-                    color = RusTorTheme.colors.primary,
-                    textAlign = TextAlign.Center,
+                RuStoreAnimatedLogo(
+                    accessibilityLabel = stringResource(R.string.onboarding_brand),
+                    modifier = Modifier.size(96.dp),
                 )
 
                 Spacer(

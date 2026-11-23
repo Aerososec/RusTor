@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,13 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.rustor.core.ui.R
 import com.rustor.core.ui.components.annotation.ThemePreviews
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.core.ui.R as CoreUiR
 
 private val LogoSize = 40.dp
 
@@ -155,7 +155,7 @@ private fun RusTorMainTopBarPreview() {
         RusTorMainTopBar(
             title = "Витрина",
             subtitle = "Открой что-то новое",
-            logo = rememberVectorPainter(Icons.Filled.Star),
+            logo = painterResource(CoreUiR.drawable.ic_rustore_logo),
             onSearchClick = {},
         )
     }
