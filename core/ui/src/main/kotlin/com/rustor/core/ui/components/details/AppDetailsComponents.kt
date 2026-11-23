@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -26,7 +27,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.rustor.core.ui.R
 import com.rustor.core.ui.components.chip.RusTorCategoryTag
 import com.rustor.core.ui.components.icon.RusTorAppIcon
@@ -183,17 +187,33 @@ fun RusTorScreenshotStrip(
     }
 }
 
-// Общий компонент для миниатюр и полноэкранной галереи.
 @Composable
 internal fun RusTorScreenshotImage(
     url: String,
     contentDescription: String,
     modifier: Modifier = Modifier,
     retryKey: Int = 0,
+    onLoadFinished: () -> Unit = {},
 ) {
+    val context = LocalPlatformContext.current
+
     key(url, retryKey) {
+        val request = remember(context, url, retryKey) {
+            ImageRequest.Builder(context)
+                .data(url)
+                .apply {
+                    if (retryKey > 0) {
+                        memoryCachePolicy(CachePolicy.WRITE_ONLY)
+                        diskCachePolicy(CachePolicy.WRITE_ONLY)
+                    }
+                }
+                .build()
+        }
+
         SubcomposeAsyncImage(
-            model = url,
+            model = request,
+            onSuccess = { onLoadFinished() },
+            onError = { onLoadFinished() },
             contentDescription = contentDescription,
             modifier = modifier,
             // Показывает скриншот целиком, включая горизонтальные изображения.

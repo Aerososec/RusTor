@@ -31,6 +31,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.swipeDown
 
 @RunWith(AndroidJUnit4::class)
 class RusTorScreenshotViewerTest {
@@ -74,7 +76,6 @@ class RusTorScreenshotViewerTest {
         val first = imageFolder.newFile("first.png")
         writePng(first, Color.RED)
 
-        // Путь известен просмотрщику, но файла второй страницы пока нет.
         val second = File(imageFolder.root, "second.png")
         showViewer(files = listOf(first, second), initialIndex = 1)
 
@@ -86,7 +87,6 @@ class RusTorScreenshotViewerTest {
         composeRule.onNodeWithText(currentPosition).assertIsDisplayed()
         composeRule.onNodeWithText(errorMessage).assertIsDisplayed()
 
-        // Повторный запрос по тому же URI теперь сможет прочитать изображение.
         writePng(second, Color.BLUE)
         composeRule.onNodeWithText(errorMessage).assertIsDisplayed()
 
@@ -95,6 +95,28 @@ class RusTorScreenshotViewerTest {
             .performClick()
 
         assertPageDisplayed(currentPosition, Color.BLUE)
+        composeRule.onNodeWithText(errorMessage).assertDoesNotExist()
+    }
+
+    @Test
+    fun imageLoadError_swipeDown_reloadsCurrentScreenshot() {
+        val first = imageFolder.newFile("first.png")
+        writePng(first, Color.RED)
+
+        val second = File(imageFolder.root, "second.png")
+        showViewer(files = listOf(first, second), initialIndex = 1)
+
+        val position = positionText(position = 2, total = 2)
+        val errorMessage = context.getString(R.string.rustor_screenshot_error)
+
+        waitForNode(hasText(errorMessage))
+        composeRule.onNodeWithText(position).assertIsDisplayed()
+
+        writePng(second, Color.BLUE)
+        composeRule.onNodeWithTag(SCREENSHOT_REFRESH_AREA_TAG)
+            .performTouchInput { swipeDown() }
+
+        assertPageDisplayed(position, Color.BLUE)
         composeRule.onNodeWithText(errorMessage).assertDoesNotExist()
     }
 
