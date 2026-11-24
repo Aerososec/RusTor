@@ -25,10 +25,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.rustor.core.common.error.UiError
+import com.rustor.core.model.App
 import com.rustor.core.model.AppId
 import com.rustor.core.model.CategoryId
 import com.rustor.core.ui.components.bar.RusTorCategoryTopBar
@@ -66,6 +68,20 @@ import com.rustor.core.ui.R as CoreUiR
 const val SHOWCASE_FEED_TAG = "showcase_feed"
 const val SHOWCASE_REFRESH_AREA_TAG = "showcase_refresh_area"
 
+internal class ShowcasePager(val state: PagerState, val apps: State<List<App>>)
+
+@Composable
+internal fun rememberShowcasePager(feed: FeedState): ShowcasePager {
+    val apps = rememberUpdatedState(
+        (feed as? FeedState.Content)?.apps.orEmpty(),
+    )
+    val state = rememberPagerState { apps.value.size }
+
+    return remember(state, apps) {
+        ShowcasePager(state = state, apps = apps)
+    }
+}
+
 @Composable
 fun ShowcaseRoute(
     mode: ShowcaseMode,
@@ -82,11 +98,10 @@ fun ShowcaseRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val screenState = uiState
     val appliedCategory = (screenState.header as? ShowcaseHeader.Main)?.selectedCategory
-    val pageCount = (screenState.feed as? FeedState.Content)?.apps?.size ?: 0
-
-    val pagerState = key(mode, appliedCategory?.value) {
-        rememberPagerState(initialPage = 0) { pageCount }
+    val pager = key(mode, appliedCategory?.value) {
+        rememberShowcasePager(screenState.feed)
     }
+    val pagerState = pager.state
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val resources = LocalResources.current
@@ -120,14 +135,14 @@ fun ShowcaseRoute(
         onAllCategoriesClick = onAllCategoriesClick,
         onBackClick = onBackClick,
         snackbarHostState = snackbarHostState,
-        pagerState = pagerState,
+        pager = pager,
         modifier = modifier,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowcaseScreen(
+internal fun ShowcaseScreen(
     uiState: ShowcaseUiState,
     onIntent: (ShowcaseIntent) -> Unit,
     onAppClick: (AppId) -> Unit,
@@ -135,7 +150,7 @@ fun ShowcaseScreen(
     onAllCategoriesClick: () -> Unit,
     onBackClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    pagerState: PagerState,
+    pager: ShowcasePager,
     modifier: Modifier = Modifier,
 ) {
     val header = uiState.header
@@ -187,10 +202,11 @@ fun ShowcaseScreen(
                     )
                 }
 
-                key(pagerState) {
+                key(pager.state) {
                     ShowcaseFeed(
                         feed = feed,
-                        pagerState = pagerState,
+                        pager = pager,
+                        showCategoryChips = header is ShowcaseHeader.Main,
                         onAppClick = onAppClick,
                         onRefresh = refresh,
                         modifier = Modifier
@@ -206,34 +222,20 @@ fun ShowcaseScreen(
 @Composable
 private fun ShowcaseFeed(
     feed: FeedState,
-    pagerState: PagerState,
+    pager: ShowcasePager,
+    showCategoryChips: Boolean,
     onAppClick: (AppId) -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (feed) {
         is FeedState.Content -> {
-            val appIds = feed.apps.map { it.id.value }
-            var previousAppIds by remember(pagerState) {
-                mutableStateOf(appIds)
-            }
-
-            LaunchedEffect(pagerState, appIds) {
-                if (appIds != previousAppIds) {
-                    previousAppIds = appIds
-
-                    if (appIds.isNotEmpty()) {
-                        pagerState.scrollToPage(0)
-                    }
-                }
-            }
-
             VerticalPager(
-                state = pagerState,
-                key = { page -> feed.apps[page].id.value },
+                state = pager.state,
+                key = { page -> pager.apps.value[page].id.value },
                 modifier = modifier.testTag(SHOWCASE_FEED_TAG),
             ) { page ->
-                val app = feed.apps[page]
+                val app = pager.apps.value[page]
 
                 BoxWithConstraints(
                     modifier = Modifier
@@ -275,7 +277,9 @@ private fun ShowcaseFeed(
             ),
         ) {
             when (feed) {
-                FeedState.Loading -> ShowcaseFeedSkeleton()
+                FeedState.Loading -> ShowcaseFeedSkeleton(
+                    showCategoryChips = showCategoryChips,
+                )
 
                 FeedState.EmptyCatalog -> RusTorEmptyState(
                     title = stringResource(R.string.showcase_empty_title),

@@ -75,38 +75,39 @@ internal class ShowcaseViewModel @AssistedInject constructor(
         FeedResult(categoryId = categoryId, apps = apps)
     }
 
-    val uiState: StateFlow<ShowcaseUiState> = combine(
-        syncStatus,
-        categories,
-        feedResults,
-    ) { status, currentCategories, result ->
-        ShowcaseUiState(
-            header = computeHeader(
-                mode = mode,
-                categories = currentCategories,
-                selectedCategory = result.categoryId,
-            ),
-            feed = computeFeedState(
-                apps = result.apps,
-                syncStatus = status,
-                mode = mode,
-                selectedCategory = result.categoryId,
-            ),
+    val uiState: StateFlow<ShowcaseUiState> = syncStatus
+        .flatMapLatest { status ->
+            combine(categories, feedResults) { currentCategories, result ->
+                ShowcaseUiState(
+                    header = computeHeader(
+                        mode = mode,
+                        categories = currentCategories,
+                        selectedCategory = result.categoryId,
+                    ),
+                    feed = computeFeedState(
+                        apps = result.apps,
+                        syncStatus = status,
+                        mode = mode,
+                        selectedCategory = result.categoryId,
+                    ),
+                )
+            }
+        }
+        .retryWhen { cause, _ ->
+            if (cause !is AppException) return@retryWhen false
+
+            val failedAtVersion = readRetryVersion.value
+            emit(stateWithoutCatalog(FeedState.Error(cause.toUiError())))
+
+            readRetryVersion.first { it != failedAtVersion }
+            emit(stateWithoutCatalog(FeedState.Loading))
+            true
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = stateWithoutCatalog(FeedState.Loading),
         )
-    }.retryWhen { cause, _ ->
-        if (cause !is AppException) return@retryWhen false
-
-        val failedAtVersion = readRetryVersion.value
-        emit(stateWithoutCatalog(FeedState.Error(cause.toUiError())))
-
-        readRetryVersion.first { it != failedAtVersion }
-        emit(stateWithoutCatalog(FeedState.Loading))
-        true
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = stateWithoutCatalog(FeedState.Loading),
-    )
 
     private fun stateWithoutCatalog(feed: FeedState): ShowcaseUiState = ShowcaseUiState(
         header = computeHeader(

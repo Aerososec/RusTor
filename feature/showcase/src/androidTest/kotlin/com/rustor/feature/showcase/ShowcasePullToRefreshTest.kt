@@ -229,6 +229,47 @@ class ShowcasePullToRefreshTest {
         currentCard.assertIsDisplayed()
     }
 
+    @Test
+    fun content_appendedWithoutUserRefresh_keepsVisibleApp() {
+        val thirdApp = firstApp.copy(
+            id = AppId("com.rustor.test.third"),
+            name = "Third app",
+        )
+
+        assertSecondAppRemainsVisible(listOf(firstApp, secondApp, thirdApp))
+
+        composeRule.onNodeWithTag(SHOWCASE_FEED_TAG).performScrollToIndex(2)
+        composeRule.onNodeWithText(thirdApp.name).assertIsDisplayed()
+    }
+
+    @Test
+    fun content_replacedEarlierAppWithoutUserRefresh_keepsVisibleApp() {
+        val replacement = firstApp.copy(
+            id = AppId("com.rustor.test.replacement"),
+            name = "Replacement",
+        )
+
+        assertSecondAppRemainsVisible(listOf(replacement, secondApp))
+    }
+
+    private fun assertSecondAppRemainsVisible(updatedApps: List<App>) {
+        val content = FeedState.Content(
+            apps = listOf(firstApp, secondApp),
+            isRefreshing = false,
+        )
+        val feedState = showScreen(content)
+
+        composeRule.onNodeWithTag(SHOWCASE_FEED_TAG).performScrollToIndex(1)
+        composeRule.onNodeWithText(secondApp.name).assertIsDisplayed()
+
+        composeRule.runOnIdle {
+            feedState.value = content.copy(apps = updatedApps)
+        }
+
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText(secondApp.name).assertIsDisplayed()
+    }
+
 
     private fun showScreen(
         feed: FeedState,
@@ -239,9 +280,7 @@ class ShowcasePullToRefreshTest {
         composeRule.setContent {
             RusTorTheme {
                 val currentFeed = feedState.value
-                val pagerState = rememberPagerState(initialPage = 0) {
-                    (currentFeed as? FeedState.Content)?.apps?.size ?: 0
-                }
+                val pager = rememberShowcasePager(currentFeed)
                 val snackbarHostState = remember { SnackbarHostState() }
 
                 ShowcaseScreen(
@@ -258,7 +297,7 @@ class ShowcasePullToRefreshTest {
                     onAllCategoriesClick = {},
                     onBackClick = {},
                     snackbarHostState = snackbarHostState,
-                    pagerState = pagerState,
+                    pager = pager,
                 )
             }
         }

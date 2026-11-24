@@ -3,6 +3,7 @@ package com.rustor.feature.showcase
 import androidx.lifecycle.SavedStateHandle
 import com.rustor.core.common.error.AppException
 import com.rustor.core.common.error.UiError
+import com.rustor.core.domain.repository.CatalogRepository
 import com.rustor.core.model.AgeRating
 import com.rustor.core.model.App
 import com.rustor.core.model.AppId
@@ -19,11 +20,15 @@ import com.rustor.feature.showcase.uiState.ShowcaseUiState
 import com.rustor.feature.showcase.viewModel.ShowcaseViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -220,6 +225,67 @@ class ShowcaseViewModelTest {
         viewModel.onIntent(ShowcaseIntent.Back)
         advanceUntilIdle()
         assertEquals(FeedState.Content(listOf(game, tool), isRefreshing = false), viewModel.uiState.value.feed)
+    }
+
+    @Test
+    fun firstSuccessfulWriteDoesNotShowEmptyWhileRoomDeliversItsNewSnapshot() = runTest {
+        val allowWrite = CompletableDeferred<Unit>()
+        val allowUpdatedRead = CompletableDeferred<Unit>()
+
+        val source = object : CatalogRepository by repository {
+            override suspend fun refresh(reshuffle: Boolean) {
+                allowWrite.await()
+                repository.feed.value = someApps
+            }
+
+            override fun observeFeed(): Flow<List<App>> = flow {
+                val initial = repository.feed.value
+
+                if (initial.isEmpty()) {
+                    emit(initial)
+                }
+
+                allowUpdatedRead.await()
+                emitAll(repository.feed)
+            }
+        }
+
+        val viewModel = ShowcaseViewModel(source, savedStateHandle, ShowcaseMode.Main)
+        val states = collectStates(viewModel)
+        runCurrent()
+
+        assertEquals(FeedState.Loading, viewModel.uiState.value.feed)
+
+        allowWrite.complete(Unit)
+        runCurrent()
+
+        assertEquals(FeedState.Loading, viewModel.uiState.value.feed)
+
+        allowUpdatedRead.complete(Unit)
+        runCurrent()
+
+        assertEquals(
+            FeedState.Content(someApps, isRefreshing = false),
+            viewModel.uiState.value.feed,
+        )
+        assertTrue(states.none { it.feed == FeedState.EmptyCatalog })
+    }
+
+    @Test
+    fun successfulRefreshWithNoAppsShowsEmptyCatalog() = runTest {
+        val allowRefresh = CompletableDeferred<Unit>()
+        repository.gate = allowRefresh
+
+        val viewModel = createViewModel(ShowcaseMode.Main)
+        collectStates(viewModel)
+        runCurrent()
+
+        assertEquals(FeedState.Loading, viewModel.uiState.value.feed)
+
+        allowRefresh.complete(Unit)
+        runCurrent()
+
+        assertEquals(FeedState.EmptyCatalog, viewModel.uiState.value.feed)
     }
 
     private fun createViewModel(mode: ShowcaseMode) = ShowcaseViewModel(repository, savedStateHandle, mode)
