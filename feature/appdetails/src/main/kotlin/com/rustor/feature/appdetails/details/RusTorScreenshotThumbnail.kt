@@ -1,4 +1,4 @@
-package com.rustor.core.ui.components.details
+package com.rustor.feature.appdetails.details
 
 import android.os.Build
 import androidx.compose.foundation.Image
@@ -31,8 +31,8 @@ import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
-import com.rustor.core.ui.R
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.feature.appdetails.R
 
 private val PortraitWidth = 160.dp
 private val PortraitHeight = 284.dp

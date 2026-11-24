@@ -1,10 +1,9 @@
 package com.rustor.data.catalog.mappers
 
-import com.rustor.core.database.entity.CatalogEntities
 import com.rustor.core.database.entity.PopularAppEntity
 import com.rustor.data.catalog.dto.CatalogDto
 
-fun CatalogDto.toEntities(): CatalogEntities {
+internal fun CatalogDto.toEntities(): CatalogEntities {
     val categoryEntities = categories
         .filter { it.id.isNotBlank() }
         .distinctBy { it.id }

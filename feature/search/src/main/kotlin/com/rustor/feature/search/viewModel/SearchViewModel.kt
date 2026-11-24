@@ -1,6 +1,5 @@
 package com.rustor.feature.search.viewModel
 
-import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -175,19 +174,10 @@ class SearchViewModel @Inject constructor(private val repository: CatalogReposit
     }
 
     private fun <T> observeResult(source: () -> Flow<T>): Flow<Result<T>> = flow<Result<T>> {
-        emitAll(
-            source().map { value ->
-                Result.success(value)
-            },
-        )
+        emitAll(source().map { value -> Result.success(value) })
     }.catch { error ->
-        when (error) {
-            is AppException, is SQLiteException -> {
-                emit(Result.failure(error))
-            }
-
-            else -> throw error
-        }
+        if (error !is AppException) throw error
+        emit(Result.failure(error))
     }
 
     private fun Throwable.toReadUiError(): UiError = when (this) {
@@ -284,9 +274,6 @@ class SearchViewModel @Inject constructor(private val repository: CatalogReposit
         repository.observeFeed().first().isNotEmpty()
     } catch (error: AppException) {
         Log.w(TAG, "Unable to check cached catalog apps", error)
-        false
-    } catch (error: SQLiteException) {
-        Log.w(TAG, "Unable to read cached catalog apps from database", error)
         false
     }
 

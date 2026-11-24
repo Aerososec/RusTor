@@ -1,6 +1,5 @@
 package com.rustor.data.catalog.repository
 
-import android.database.sqlite.SQLiteException
 import com.rustor.core.common.error.AppException
 import com.rustor.core.database.dao.CatalogDao
 import com.rustor.core.domain.repository.CatalogRepository
@@ -75,27 +74,17 @@ internal class CatalogRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun observeApp(appId: AppId): Flow<App?> = catalogDao.observeApp(appId.value)
-        .map { app ->
+    override fun observeApp(appId: AppId): Flow<App?> = observeCatalogRead {
+        catalogDao.observeApp(appId.value).map { app ->
             app?.toDomain()
         }
-        .catch { error ->
-            when (error) {
-                is SQLiteException -> throw AppException.Unknown(error)
-                else -> throw error
-            }
-        }
+    }
 
-    override fun observePopularApps(): Flow<List<App>> = catalogDao.observePopularApps()
-        .map { apps ->
+    override fun observePopularApps(): Flow<List<App>> = observeCatalogRead {
+        catalogDao.observePopularApps().map { apps ->
             apps.map { it.toDomain() }
         }
-        .catch { error ->
-            when (error) {
-                is SQLiteException -> throw AppException.Unknown(error)
-                else -> throw error
-            }
-        }
+    }
 
     private fun <T> observeCatalogRead(source: () -> Flow<T>): Flow<T> = flow {
         emitAll(source())

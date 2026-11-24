@@ -1,4 +1,4 @@
-package com.rustor.core.ui.components.details
+package com.rustor.feature.appdetails.details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,11 +31,11 @@ import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.rustor.core.ui.R
 import com.rustor.core.ui.components.chip.RusTorCategoryTag
 import com.rustor.core.ui.components.icon.RusTorAppIcon
 import com.rustor.core.ui.components.icon.RusTorAppIconSize
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.feature.appdetails.R
 
 const val SCREENSHOT_STRIP_TAG = "screenshot_strip"
 

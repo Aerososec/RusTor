@@ -11,6 +11,8 @@ android {
 }
 
 dependencies {
+    api(project(":core:common"))
+
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.activity.compose)

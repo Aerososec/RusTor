@@ -25,9 +25,8 @@ import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.rustor.MainActivity
 import com.rustor.core.model.App
-import com.rustor.core.ui.components.details.SCREENSHOT_STRIP_TAG
+import com.rustor.feature.appdetails.details.SCREENSHOT_STRIP_TAG
 import com.rustor.feature.appdetails.APP_DETAILS_CONTENT_TAG
-import com.rustor.navigation.RusTorTab
 import com.rustor.testing.CatalogTestEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.first
@@ -38,7 +37,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.rustor.core.ui.R as CoreUiR
 import com.rustor.feature.appdetails.R as AppDetailsR
 
 @RunWith(AndroidJUnit4::class)
@@ -77,7 +75,7 @@ class ScreenshotNavigationTest {
 
     private val selectedPositionText: String
         get() = context.getString(
-            CoreUiR.string.rustor_screenshot_position,
+            AppDetailsR.string.rustor_screenshot_position,
             SELECTED_SCREENSHOT_INDEX + 1,
             expectedApp.screenshots.size,
         )

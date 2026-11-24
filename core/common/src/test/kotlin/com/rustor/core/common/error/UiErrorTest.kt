@@ -1,10 +1,7 @@
-package com.rustor.feature.showcase
+package com.rustor.core.common.error
 
-import com.rustor.core.common.error.AppException
-import com.rustor.core.common.error.UiError
-import com.rustor.core.common.error.toUiError
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class UiErrorTest {
 

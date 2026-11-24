@@ -10,15 +10,10 @@
     <string name="rustor_loading">Загрузка</string>
 
     <string name="rustor_app_details">О приложении</string>
-    <string name="rustor_about_app">Описание</string>
-    <string name="rustor_age_rating">Возрастной рейтинг: %1$s</string>
-    <string name="rustor_screenshots">Скриншоты</string>
-    <string name="rustor_screenshot_position">Скриншот %1$d из %2$d</string>
-    <string name="rustor_no_screenshots">Скриншоты пока не добавлены</string>
-    <string name="rustor_screenshot_error">Не удалось загрузить изображение</string>
-    <string name="rustor_reload_screenshot">Повторить загрузку скриншота</string>
-    <string name="rustor_install">Установить</string>
 
+    <string name="rustor_error_no_connection">Проверь подключение к интернету.</string>
+    <string name="rustor_error_service_unavailable">Сервис временно недоступен.</string>
+    <string name="rustor_error_unknown">Попробуй ещё раз.</string>
 
     <plurals name="rustor_category_app_count">
         <item quantity="one">%d приложение</item>

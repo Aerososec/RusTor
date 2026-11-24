@@ -7,8 +7,14 @@
     <string name="app_details_error_title">Не удалось загрузить приложение</string>
     <string name="app_details_refresh">Обновить</string>
     <string name="app_details_retry">Повторить</string>
-    <string name="app_details_error_no_connection">Проверь подключение к интернету.</string>
-    <string name="app_details_error_service_unavailable">Сервис временно недоступен.</string>
-    <string name="app_details_error_unknown">Попробуй ещё раз.</string>
     <string name="app_details_refresh_error_message">Не удалось обновить приложение. %1$s</string>
+
+    <string name="rustor_about_app">Описание</string>
+    <string name="rustor_age_rating">Возрастной рейтинг: %1$s</string>
+    <string name="rustor_screenshots">Скриншоты</string>
+    <string name="rustor_screenshot_position">Скриншот %1$d из %2$d</string>
+    <string name="rustor_no_screenshots">Скриншоты пока не добавлены</string>
+    <string name="rustor_screenshot_error">Не удалось загрузить изображение</string>
+    <string name="rustor_reload_screenshot">Повторить загрузку скриншота</string>
+    <string name="rustor_install">Установить</string>
 </resources>

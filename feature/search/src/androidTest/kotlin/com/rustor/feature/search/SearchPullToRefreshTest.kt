@@ -84,7 +84,7 @@ class SearchPullToRefreshTest {
             .performScrollTo()
             .assertIsDisplayed()
 
-        val errorDescription = context.getString(R.string.rustor_search_error_no_connection)
+        val errorDescription = context.getString(CoreUiR.string.rustor_error_no_connection)
 
         composeRule.onNodeWithText(errorDescription)
             .performScrollTo()

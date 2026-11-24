@@ -1,6 +1,5 @@
 package com.rustor.feature.search
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,12 +24,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.rustor.core.common.error.UiError
 import com.rustor.core.model.AppId
 import com.rustor.core.model.CategoryId
 import com.rustor.core.ui.components.search.RusTorSearchField
 import com.rustor.core.ui.components.state.RusTorErrorState
 import com.rustor.core.ui.components.state.RusTorLoadingState
+import com.rustor.core.ui.error.messageResId
 import com.rustor.feature.search.ui.RusTorSearchFilters
 import com.rustor.feature.search.ui.RusTorSearchResults
 import com.rustor.feature.search.ui.SearchIntent
@@ -178,11 +177,4 @@ private fun SearchResult(uiState: SearchUiState, onAppClick: (AppId) -> Unit, on
             )
         }
     }
-}
-
-@StringRes
-private fun UiError.messageResId(): Int = when (this) {
-    UiError.NoConnection -> R.string.rustor_search_error_no_connection
-    UiError.ServiceUnavailable -> R.string.rustor_search_error_service_unavailable
-    UiError.Unknown -> R.string.rustor_search_error_unknown
 }

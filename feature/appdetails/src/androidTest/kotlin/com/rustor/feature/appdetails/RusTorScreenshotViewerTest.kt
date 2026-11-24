@@ -1,4 +1,4 @@
-package com.rustor.core.ui.components.details
+package com.rustor.feature.appdetails
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -23,7 +23,7 @@ import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.rustor.core.ui.R
+import com.rustor.feature.appdetails.R
 import com.rustor.core.ui.theme.RusTorTheme
 import java.io.File
 import org.junit.Assert.assertEquals
@@ -33,6 +33,8 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.swipeDown
+import com.rustor.feature.appdetails.details.RusTorScreenshotViewer
+import com.rustor.feature.appdetails.details.SCREENSHOT_REFRESH_AREA_TAG
 
 @RunWith(AndroidJUnit4::class)
 class RusTorScreenshotViewerTest {

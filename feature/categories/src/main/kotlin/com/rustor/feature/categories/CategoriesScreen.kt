@@ -1,6 +1,5 @@
 package com.rustor.feature.categories
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -30,7 +29,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.rustor.core.common.error.UiError
 import com.rustor.core.model.CategoryId
 import com.rustor.core.model.CategorySummary
 import com.rustor.core.ui.components.bar.RusTorCategoryTopBar
@@ -38,6 +36,7 @@ import com.rustor.core.ui.components.card.RusTorCategoryCard
 import com.rustor.core.ui.components.state.RusTorEmptyState
 import com.rustor.core.ui.components.state.RusTorErrorState
 import com.rustor.core.ui.components.state.RusTorLoadingState
+import com.rustor.core.ui.error.messageResId
 import com.rustor.core.ui.theme.RusTorTheme
 import com.rustor.feature.categories.ui.CategoriesIntent
 import com.rustor.feature.categories.ui.CategoriesUiState
@@ -210,11 +209,4 @@ private fun CategoriesList(
             )
         }
     }
-}
-
-@StringRes
-private fun UiError.messageResId(): Int = when (this) {
-    UiError.NoConnection -> R.string.categories_error_no_connection
-    UiError.ServiceUnavailable -> R.string.categories_error_service_unavailable
-    UiError.Unknown -> R.string.categories_error_unknown
 }

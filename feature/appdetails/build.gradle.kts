@@ -19,4 +19,5 @@ dependencies{
 
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.coil.compose)
 }

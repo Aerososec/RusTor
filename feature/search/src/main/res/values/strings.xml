@@ -7,8 +7,5 @@
     <string name="rustor_search_empty">Приложений пока нет</string>
     <string name="rustor_search_error">Не удалось загрузить приложения</string>
 
-    <string name="rustor_search_error_no_connection">Проверь подключение к интернету.</string>
-    <string name="rustor_search_error_service_unavailable">Сервис временно недоступен.</string>
-    <string name="rustor_search_error_unknown">Попробуй ещё раз.</string>
     <string name="rustor_search_refresh_error_message">Временные неполадки %1$s</string>
 </resources>

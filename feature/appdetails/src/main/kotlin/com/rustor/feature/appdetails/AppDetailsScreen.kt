@@ -1,6 +1,5 @@
 package com.rustor.feature.appdetails
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -28,20 +27,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.rustor.core.common.error.UiError
 import com.rustor.core.model.AgeRating
 import com.rustor.core.model.App
 import com.rustor.core.model.AppId
 import com.rustor.core.ui.components.bar.RusTorCategoryTopBar
 import com.rustor.core.ui.components.button.RusTorButton
-import com.rustor.core.ui.components.details.RusTorAgeRating
-import com.rustor.core.ui.components.details.RusTorAppDescription
-import com.rustor.core.ui.components.details.RusTorAppDetailsHeader
-import com.rustor.core.ui.components.details.RusTorScreenshotStrip
 import com.rustor.core.ui.components.state.RusTorEmptyState
 import com.rustor.core.ui.components.state.RusTorErrorState
 import com.rustor.core.ui.components.state.RusTorLoadingState
+import com.rustor.core.ui.error.messageResId
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.feature.appdetails.details.RusTorAgeRating
+import com.rustor.feature.appdetails.details.RusTorAppDescription
+import com.rustor.feature.appdetails.details.RusTorAppDetailsHeader
+import com.rustor.feature.appdetails.details.RusTorScreenshotStrip
 import com.rustor.feature.appdetails.ui.AppDetailsIntent
 import com.rustor.feature.appdetails.ui.AppDetailsSideEffect
 import com.rustor.feature.appdetails.ui.AppDetailsUiState
@@ -219,7 +218,7 @@ private fun AppDetailsContent(
 
         item(key = "install") {
             RusTorButton(
-                text = stringResource(com.rustor.core.ui.R.string.rustor_install),
+                text = stringResource(com.rustor.feature.appdetails.R.string.rustor_install),
                 onClick = {},
                 enabled = true,
                 modifier = Modifier
@@ -259,11 +258,4 @@ private fun AgeRating.toUiAgeRating(): RusTorAgeRating = when (this) {
     AgeRating.TWELVE_PLUS -> RusTorAgeRating.AGE_12
     AgeRating.SIXTEEN_PLUS -> RusTorAgeRating.AGE_16
     AgeRating.EIGHTEEN_PLUS -> RusTorAgeRating.AGE_18
-}
-
-@StringRes
-private fun UiError.messageResId(): Int = when (this) {
-    UiError.NoConnection -> R.string.app_details_error_no_connection
-    UiError.ServiceUnavailable -> R.string.app_details_error_service_unavailable
-    UiError.Unknown -> R.string.app_details_error_unknown
 }

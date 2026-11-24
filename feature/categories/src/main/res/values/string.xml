@@ -11,8 +11,5 @@
 
     <string name="categories_error_title">Не удалось загрузить категории</string>
 
-    <string name="categories_error_no_connection">Проверь подключение к интернету.</string>
-    <string name="categories_error_service_unavailable">Сервис временно недоступен.</string>
-    <string name="categories_error_unknown">Попробуй ещё раз.</string>
     <string name="categories_refresh_error_message">Не удалось обновить категории. %1$s</string>
 </resources>

@@ -54,7 +54,7 @@ class CategoriesPullToRefreshTest {
         composeRule.onNodeWithText(errorTitle)
             .assertIsDisplayed()
 
-        val errorDescription = context.getString(R.string.categories_error_no_connection)
+        val errorDescription = context.getString(CoreUiR.string.rustor_error_no_connection)
         composeRule.onNodeWithText(errorDescription)
             .assertIsDisplayed()
 

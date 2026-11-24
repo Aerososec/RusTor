@@ -1,4 +1,4 @@
-package com.rustor.core.ui.components.details
+package com.rustor.feature.appdetails.details
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.Orientation
@@ -22,17 +22,16 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import com.rustor.core.ui.R
 import com.rustor.core.ui.theme.RusTorTheme
+import com.rustor.feature.appdetails.R
+import com.rustor.core.ui.R as CoreUiR
 
 internal const val SCREENSHOT_REFRESH_AREA_TAG = "screenshot_refresh_area"
 
@@ -166,7 +165,7 @@ private fun ScreenshotViewerTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.rustor_action_back),
+                    contentDescription = stringResource(CoreUiR.string.rustor_action_back),
                 )
             }
         },

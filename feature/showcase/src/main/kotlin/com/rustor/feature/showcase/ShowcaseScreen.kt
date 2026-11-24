@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +51,7 @@ import com.rustor.core.ui.components.chip.RusTorAssistChip
 import com.rustor.core.ui.components.chip.RusTorFilterChip
 import com.rustor.core.ui.components.state.RusTorEmptyState
 import com.rustor.core.ui.components.state.RusTorErrorState
+import com.rustor.core.ui.error.messageResId
 import com.rustor.core.ui.theme.RusTorTheme
 import com.rustor.feature.showcase.ui.showcaseFeed.ShowcaseFeedSkeleton
 import com.rustor.feature.showcase.uiState.FeedState
@@ -87,7 +89,9 @@ fun ShowcaseRoute(
     }
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel, lifecycleOwner, pagerState, snackbarHostState) {
+    val resources = LocalResources.current
+
+    LaunchedEffect(viewModel, lifecycleOwner, pagerState, snackbarHostState, resources) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
@@ -98,8 +102,9 @@ fun ShowcaseRoute(
                     }
 
                     is ShowcaseSideEffect.ShowSnackbarError -> {
+                        val description = resources.getString(effect.error.messageResId())
                         snackbarHostState.showSnackbar(
-                            "Не удалось обновить. ${effect.error.userMessage()}",
+                            resources.getString(R.string.showcase_refresh_error_message, description),
                         )
                     }
                 }
@@ -286,7 +291,7 @@ private fun ShowcaseFeed(
 
                 is FeedState.Error -> RusTorErrorState(
                     title = stringResource(R.string.showcase_error_title),
-                    description = feed.error.userMessage(),
+                    description = stringResource(feed.error.messageResId()),
                     onRetry = onRefresh,
                 )
             }

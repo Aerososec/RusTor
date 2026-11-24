@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import com.rustor.core.ui.R as CoreUiR
 
 @RunWith(AndroidJUnit4::class)
 class AppDetailsPullToRefreshTest {
@@ -68,7 +69,7 @@ class AppDetailsPullToRefreshTest {
         showScreen(AppDetailsUiState.Error(UiError.NoConnection))
 
         val errorTitle = context.getString(R.string.app_details_error_title)
-        val errorDescription = context.getString(R.string.app_details_error_no_connection)
+        val errorDescription = context.getString(CoreUiR.string.rustor_error_no_connection)
         val retryLabel = context.getString(R.string.app_details_retry)
 
         composeRule.onNodeWithText(errorTitle)

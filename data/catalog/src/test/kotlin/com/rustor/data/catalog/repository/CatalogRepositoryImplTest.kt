@@ -1,17 +1,22 @@
 package com.rustor.data.catalog.repository
 
 import android.content.Context
+import android.database.sqlite.SQLiteException
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.rustor.core.common.error.AppException
 import com.rustor.core.database.RusTorDatabase
 import com.rustor.core.database.dao.CatalogDao
+import com.rustor.core.model.AppId
 import com.rustor.data.catalog.dataSourse.CatalogRemoteDataSource
 import com.rustor.data.catalog.dto.CatalogDto
 import com.rustor.data.catalog.mappers.appDto
 import com.rustor.data.catalog.mappers.catalog
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runCurrent
@@ -19,11 +24,13 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import java.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 import kotlin.test.assertFailsWith
 
@@ -134,6 +141,47 @@ class CatalogRepositoryImplTest {
 
         assertEquals(popularIds, dao.observePopularApps().first().map { it.app.id })
         assertEquals(popularIds, repository.observePopularApps().first().map { it.id.value })
+    }
+
+    @Test
+    fun `observeApp wraps failure when DAO creates the flow`() = runTest {
+        val cause = SQLiteException("Cannot open catalog")
+        val failingDao = mockk<CatalogDao>()
+        every { failingDao.observeApp("a") } throws cause
+        val subject = CatalogRepositoryImpl(failingDao, remote, Random(42))
+
+        val error = assertFailsWith<AppException.Unknown> {
+            subject.observeApp(AppId("a")).first()
+        }
+
+        assertSame(cause, error.cause)
+    }
+
+    @Test
+    fun `observePopularApps wraps failure during collection`() = runTest {
+        val cause = IllegalStateException("Cannot read popular apps")
+        val failingDao = mockk<CatalogDao>()
+        every { failingDao.observePopularApps() } returns flow { throw cause }
+        val subject = CatalogRepositoryImpl(failingDao, remote, Random(42))
+
+        val error = assertFailsWith<AppException.Unknown> {
+            subject.observePopularApps().first()
+        }
+
+        assertSame(cause, error.cause)
+    }
+
+    @Test
+    fun `observePopularApps propagates cancellation`() = runTest {
+        val failingDao = mockk<CatalogDao>()
+        every { failingDao.observePopularApps() } returns flow {
+            throw CancellationException("Collection cancelled")
+        }
+        val subject = CatalogRepositoryImpl(failingDao, remote, Random(42))
+
+        assertFailsWith<CancellationException> {
+            subject.observePopularApps().first()
+        }
     }
     private fun catalogOf(vararg ids: String): CatalogDto =
         catalog(*ids.map { appDto(packageName = it) }.toTypedArray())

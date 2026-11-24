@@ -4,4 +4,5 @@ plugins{
 
 dependencies{
     api(libs.javax.inject)
+    testImplementation(libs.junit)
 }

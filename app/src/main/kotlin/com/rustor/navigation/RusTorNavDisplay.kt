@@ -1,17 +1,13 @@
 package com.rustor.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
@@ -23,8 +19,8 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.rustor.core.model.AppId
 import com.rustor.core.model.CategoryId
-import com.rustor.core.ui.components.details.RusTorScreenshotViewer
 import com.rustor.feature.appdetails.AppDetailsRoute
+import com.rustor.feature.appdetails.details.RusTorScreenshotViewer
 import com.rustor.feature.categories.CategoriesRoute
 import com.rustor.feature.search.SearchRoute
 import com.rustor.feature.showcase.ShowcaseRoute
@@ -213,15 +209,5 @@ private fun rememberTabEntries(
 private fun MutableList<NavKey>.popBackStack() {
     if (size > 1) {
         removeLastOrNull()
-    }
-}
-
-@Composable
-fun SearchPlaceholderScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(text = "Экран поиска")
     }
 }
