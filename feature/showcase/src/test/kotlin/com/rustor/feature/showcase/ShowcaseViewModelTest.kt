@@ -120,7 +120,8 @@ class ShowcaseViewModelTest {
         assertEquals(listOf(false, true), repository.refreshCalls)
         assertEquals(1, repository.cancelledCalls)
         assertEquals(FeedState.Content(someApps, isRefreshing = false), viewModel.uiState.value.feed)
-        assertEquals(listOf(ShowcaseSideEffect.ScrollToTop), effects)
+        assertEquals(1L, viewModel.uiState.value.refreshRevision)
+        assertTrue(effects.isEmpty())
     }
 
     @Test
@@ -164,16 +165,52 @@ class ShowcaseViewModelTest {
     }
 
     @Test
-    fun `successful user refresh scrolls to top`() = runTest {
-        val viewModel = createViewModel(ShowcaseMode.Main)
-        collectStates(viewModel)
-        val effects = collectEffects(viewModel)
-        advanceUntilIdle()
+    fun manualRefreshPublishesNewRevisionWithCommittedFeed() = runTest {
+        val finishWrite = CompletableDeferred<Unit>()
+        val deliverRead = CompletableDeferred<Unit>()
+        val updatedApps = someApps.reversed()
+        var didWrite = false
+
+        val source = object : CatalogRepository by repository {
+            override suspend fun refresh(reshuffle: Boolean) {
+                if (reshuffle) {
+                    finishWrite.await()
+                    didWrite = true
+                }
+            }
+
+            override fun observeFeed(): Flow<List<App>> = flow {
+                if (didWrite) {
+                    deliverRead.await()
+                    emit(updatedApps)
+                } else {
+                    emit(someApps)
+                }
+            }
+        }
+
+        val viewModel = ShowcaseViewModel(source, savedStateHandle, ShowcaseMode.Main)
+        val states = collectStates(viewModel)
+        runCurrent()
 
         viewModel.onIntent(ShowcaseIntent.Refresh)
-        advanceUntilIdle()
+        runCurrent()
+        finishWrite.complete(Unit)
+        runCurrent()
 
-        assertEquals(listOf(ShowcaseSideEffect.ScrollToTop), effects)
+        assertEquals(0L, viewModel.uiState.value.refreshRevision)
+
+        deliverRead.complete(Unit)
+        runCurrent()
+
+        val updatedState = viewModel.uiState.value
+        assertEquals(1L, updatedState.refreshRevision)
+        assertEquals(FeedState.Content(updatedApps, isRefreshing = false), updatedState.feed)
+        assertTrue(
+            states.filter { it.refreshRevision == 1L }.all {
+                it.feed == FeedState.Content(updatedApps, isRefreshing = false)
+            },
+        )
     }
 
     @Test

@@ -39,6 +39,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.performScrollToIndex
+import androidx.compose.runtime.State
 
 @RunWith(AndroidJUnit4::class)
 class ShowcasePullToRefreshTest {
@@ -274,13 +275,18 @@ class ShowcasePullToRefreshTest {
     private fun showScreen(
         feed: FeedState,
         selectedCategory: CategoryId? = null,
+        refreshRevision: State<Long> = mutableStateOf(0L),
     ): MutableState<FeedState> {
         val feedState = mutableStateOf(feed)
 
         composeRule.setContent {
             RusTorTheme {
                 val currentFeed = feedState.value
-                val pager = rememberShowcasePager(currentFeed)
+                val revision = refreshRevision.value
+                val pager = rememberShowcasePager(
+                    feed = currentFeed,
+                    refreshRevision = revision,
+                )
                 val snackbarHostState = remember { SnackbarHostState() }
 
                 ShowcaseScreen(
@@ -290,6 +296,7 @@ class ShowcasePullToRefreshTest {
                             selectedCategory = selectedCategory,
                         ),
                         feed = currentFeed,
+                        refreshRevision = revision,
                     ),
                     onIntent = { intent -> receivedIntents += intent },
                     onAppClick = {},
@@ -303,6 +310,43 @@ class ShowcasePullToRefreshTest {
         }
 
         return feedState
+    }
+
+    @Test
+    fun manualRefreshWithReorderedFeedShowsNewFirstPage() {
+        assertRefreshShowsFirstPage(
+            updatedApps = listOf(
+                secondApp.copy(name = "New first page"),
+                firstApp.copy(name = "New second page"),
+            ),
+        )
+    }
+
+    @Test
+    fun manualRefreshWithUnchangedOrderStillReturnsToFirstPage() {
+        assertRefreshShowsFirstPage(updatedApps = listOf(firstApp, secondApp))
+    }
+
+    private fun assertRefreshShowsFirstPage(updatedApps: List<App>) {
+        val revision = mutableStateOf(0L)
+        val content = FeedState.Content(
+            apps = listOf(firstApp, secondApp),
+            isRefreshing = false,
+        )
+        val feed = showScreen(feed = content, refreshRevision = revision)
+
+        composeRule.runOnIdle {
+            feed.value = content.copy(isRefreshing = true)
+        }
+        composeRule.onNodeWithTag(SHOWCASE_FEED_TAG).performScrollToIndex(1)
+        composeRule.onNodeWithText(secondApp.name).assertIsDisplayed()
+
+        composeRule.runOnIdle {
+            feed.value = FeedState.Content(updatedApps, isRefreshing = false)
+            revision.value = 1L
+        }
+
+        composeRule.onNodeWithText(updatedApps.first().name).assertIsDisplayed()
     }
 
     private fun swipeDownAndAssertRefresh() {

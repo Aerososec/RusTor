@@ -48,11 +48,16 @@ internal class ShowcaseViewModel @AssistedInject constructor(
 
     private var syncJob: Job? = null
 
-    private val syncStatus: MutableStateFlow<SyncStatus> = MutableStateFlow(
-        when (mode) {
-            ShowcaseMode.Main -> SyncStatus.Syncing(SyncTrigger.Background)
-            is ShowcaseMode.Category -> SyncStatus.Idle
-        },
+    private data class SyncState(val status: SyncStatus, val refreshRevision: Long)
+
+    private val syncState = MutableStateFlow(
+        SyncState(
+            status = when (mode) {
+                ShowcaseMode.Main -> SyncStatus.Syncing(SyncTrigger.Background)
+                is ShowcaseMode.Category -> SyncStatus.Idle
+            },
+            refreshRevision = savedStateHandle.get<Long>(REFRESH_REVISION_KEY) ?: 0L,
+        ),
     )
     private val readRetryVersion = MutableStateFlow(0L)
 
@@ -75,8 +80,8 @@ internal class ShowcaseViewModel @AssistedInject constructor(
         FeedResult(categoryId = categoryId, apps = apps)
     }
 
-    val uiState: StateFlow<ShowcaseUiState> = syncStatus
-        .flatMapLatest { status ->
+    val uiState: StateFlow<ShowcaseUiState> = syncState
+        .flatMapLatest { sync ->
             combine(categories, feedResults) { currentCategories, result ->
                 ShowcaseUiState(
                     header = computeHeader(
@@ -86,10 +91,11 @@ internal class ShowcaseViewModel @AssistedInject constructor(
                     ),
                     feed = computeFeedState(
                         apps = result.apps,
-                        syncStatus = status,
+                        syncStatus = sync.status,
                         mode = mode,
                         selectedCategory = result.categoryId,
                     ),
+                    refreshRevision = sync.refreshRevision,
                 )
             }
         }
@@ -116,6 +122,7 @@ internal class ShowcaseViewModel @AssistedInject constructor(
             selectedCategory = selectedCategory.value?.let(::CategoryId),
         ),
         feed = feed,
+        refreshRevision = syncState.value.refreshRevision,
     )
 
     private val _effects = Channel<ShowcaseSideEffect>(Channel.BUFFERED)
@@ -144,7 +151,7 @@ internal class ShowcaseViewModel @AssistedInject constructor(
     private fun refresh() {
         readRetryVersion.update { it + 1 }
 
-        if (syncStatus.value == SyncStatus.Syncing(SyncTrigger.User)) return
+        if (syncState.value.status == SyncStatus.Syncing(SyncTrigger.User)) return
         syncJob?.cancel()
 
         startSync(SyncTrigger.User)
@@ -161,21 +168,30 @@ internal class ShowcaseViewModel @AssistedInject constructor(
     }
 
     private fun startSync(trigger: SyncTrigger) {
-        syncStatus.value = SyncStatus.Syncing(trigger)
-        val reshuffle = when (trigger) {
-            SyncTrigger.Background -> false
-            SyncTrigger.User -> true
-        }
+        syncState.update { it.copy(status = SyncStatus.Syncing(trigger)) }
+
+        val isUserRefresh = trigger == SyncTrigger.User
 
         syncJob = viewModelScope.launch {
             try {
-                catalogRepository.refresh(reshuffle)
-                syncStatus.value = SyncStatus.Idle
-                if (trigger == SyncTrigger.User) _effects.send(ShowcaseSideEffect.ScrollToTop)
-            } catch (e: AppException) {
-                syncStatus.value = SyncStatus.Failed(e)
-                if (trigger == SyncTrigger.User && shouldShowErrorAsSnackbar()) {
-                    _effects.send(ShowcaseSideEffect.ShowSnackbarError(e.toUiError()))
+                catalogRepository.refresh(reshuffle = isUserRefresh)
+
+                val currentRevision = syncState.value.refreshRevision
+                val nextRevision = if (isUserRefresh) currentRevision + 1L else currentRevision
+
+                if (isUserRefresh) {
+                    savedStateHandle[REFRESH_REVISION_KEY] = nextRevision
+                }
+
+                syncState.value = SyncState(
+                    status = SyncStatus.Idle,
+                    refreshRevision = nextRevision,
+                )
+            } catch (error: AppException) {
+                syncState.update { it.copy(status = SyncStatus.Failed(error)) }
+
+                if (isUserRefresh && shouldShowErrorAsSnackbar()) {
+                    _effects.send(ShowcaseSideEffect.ShowSnackbarError(error.toUiError()))
                 }
             }
         }
@@ -191,5 +207,6 @@ internal class ShowcaseViewModel @AssistedInject constructor(
 
     private companion object {
         const val SELECTED_CATEGORY_KEY = "selected_category"
+        const val REFRESH_REVISION_KEY = "refresh_revision"
     }
 }

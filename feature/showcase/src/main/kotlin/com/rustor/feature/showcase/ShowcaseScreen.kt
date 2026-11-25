@@ -71,13 +71,13 @@ const val SHOWCASE_REFRESH_AREA_TAG = "showcase_refresh_area"
 internal class ShowcasePager(val state: PagerState, val apps: State<List<App>>)
 
 @Composable
-internal fun rememberShowcasePager(feed: FeedState): ShowcasePager {
+internal fun rememberShowcasePager(feed: FeedState, refreshRevision: Long): ShowcasePager = key(refreshRevision) {
     val apps = rememberUpdatedState(
         (feed as? FeedState.Content)?.apps.orEmpty(),
     )
-    val state = rememberPagerState { apps.value.size }
+    val state = rememberPagerState(initialPage = 0) { apps.value.size }
 
-    return remember(state, apps) {
+    remember(state, apps) {
         ShowcasePager(state = state, apps = apps)
     }
 }
@@ -99,23 +99,20 @@ fun ShowcaseRoute(
     val screenState = uiState
     val appliedCategory = (screenState.header as? ShowcaseHeader.Main)?.selectedCategory
     val pager = key(mode, appliedCategory?.value) {
-        rememberShowcasePager(screenState.feed)
+        rememberShowcasePager(
+            feed = screenState.feed,
+            refreshRevision = screenState.refreshRevision,
+        )
     }
     val pagerState = pager.state
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val resources = LocalResources.current
 
-    LaunchedEffect(viewModel, lifecycleOwner, pagerState, snackbarHostState, resources) {
+    LaunchedEffect(viewModel, lifecycleOwner, snackbarHostState, resources) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effects.collect { effect ->
                 when (effect) {
-                    ShowcaseSideEffect.ScrollToTop -> {
-                        if (pagerState.pageCount > 0) {
-                            pagerState.scrollToPage(0)
-                        }
-                    }
-
                     is ShowcaseSideEffect.ShowSnackbarError -> {
                         val description = resources.getString(effect.error.messageResId())
                         snackbarHostState.showSnackbar(

@@ -84,6 +84,8 @@ fun RusTorAppCard(
         AppCardCover(
             coverUrl = coverUrl,
             coverTitle = coverTitle,
+            appName = title,
+            iconUrl = iconUrl,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(coverAspectRatio),
@@ -125,11 +127,22 @@ fun RusTorAppCard(
 }
 
 @Composable
-private fun AppCardCover(coverUrl: String?, coverTitle: String?, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.background(RusTorTheme.colors.surfaceContainerHigh),
-    ) {
-        if (coverUrl != null) {
+private fun AppCardCover(
+    coverUrl: String?,
+    coverTitle: String?,
+    appName: String,
+    iconUrl: String?,
+    modifier: Modifier = Modifier,
+) {
+    val hasScreenshot = !coverUrl.isNullOrBlank()
+    val backgroundColor = if (hasScreenshot) {
+        RusTorTheme.colors.surfaceContainerHigh
+    } else {
+        RusTorTheme.colors.primaryContainer
+    }
+
+    Box(modifier = modifier.background(backgroundColor)) {
+        if (hasScreenshot) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalPlatformContext.current)
                     .data(coverUrl)
@@ -139,7 +152,16 @@ private fun AppCardCover(coverUrl: String?, coverTitle: String?, modifier: Modif
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
             )
+        } else {
+            RusTorAppIcon(
+                imageUrl = iconUrl?.takeIf { it.isNotBlank() },
+                appName = appName,
+                size = RusTorAppIconSize.Large,
+                modifier = Modifier
+                    .align(Alignment.Center),
+            )
         }
+
         if (coverTitle != null) {
             Box(
                 modifier = Modifier
